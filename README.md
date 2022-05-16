@@ -5,6 +5,6 @@
 - 카카오 챗봇을 이용해 사진이 아니라 텍스트로 오늘과 내일의 메뉴를 제공할 예정입니다.(일요일 제외)
 
 - 구상도
-<img src="./structure.jpg">
+<img src="./temp_structure.jpg">
 
 개발중
