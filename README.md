@@ -1,5 +1,5 @@
 # menuplanner-chatbot
-한국공학대 TIP지하와 E동식당의 메뉴를 알려주는 챗봇
+프로젝트 먹도리(가제)
 
 - 구상도
 <img src="./structure.jpg">
