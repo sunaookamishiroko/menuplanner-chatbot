@@ -1,13 +1,11 @@
 import json
-import requests
-from urllib import parse
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
-
+import os
 
 def lambda_handler(event, context):
     chrome_options = Options()
@@ -36,26 +34,14 @@ def lambda_handler(event, context):
     html = driver.page_source
     driver.quit()
 
-    fileName = ''
-
+    new = ''
     soup = BeautifulSoup(html, 'html.parser')
     for li in soup.select('#raw-download > div.content > div > div:nth-child(1)'):
-        fileName = li.text
-
-    downloadUrl = 'http://contents.kpu.ac.kr/Download/engine_host=ibook.kpu.ac.kr&bookcode=HLDE4UJWP2VS&file_name={0}&file_no=1'.format(parse.quote(fileName))
-
-    pd.set_option('display.max_rows', None)
-    pd.set_option('display.max_columns', None)
-    with open('./temp.xlsx', "wb") as file:
-        response = requests.get(downloadUrl)
-        file.write(response.content)
-    print(pd.read_excel('./temp.xlsx'))
-
-
+        new = li.text
 
     return {
         'statusCode': 200,
         'body': json.dumps({
-            "message" : fileName
+            "message" : new
         })
     }
