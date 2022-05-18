@@ -1,13 +1,13 @@
-import json
-from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
-import os
+import json
+from bs4 import BeautifulSoup
 
 def lambda_handler(event, context):
+    # chromium 세팅... 건들면 안됨
     chrome_options = Options()
     chrome_options.add_argument('--headless')
     chrome_options.add_argument('--no-sandbox')
@@ -26,22 +26,35 @@ def lambda_handler(event, context):
     chrome_options.add_argument('user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.54 Safari/537.36')
     chrome_options.binary_location = "/opt/python/bin/headless-chromium"
 
+    # 크롬 드라이버 로드
     driver = webdriver.Chrome(chrome_options=chrome_options, executable_path='/opt/python/bin/chromedriver')
-    url = 'https://ibook.kpu.ac.kr/Viewer/menu01'
+
+    # E동 / TIP 구분 -> 추후 json으로 받을 예정
+    classify = 0
+    url = ''
+
+    # 0-> E동
+    # 1-> TIP
+    if classify == 0:
+        url = 'https://ibook.kpu.ac.kr/Viewer/menu01'
+    elif classify == 1:
+        url = 'https://ibook.kpu.ac.kr/Viewer/menu02'
 
     driver.get(url)
     WebDriverWait(driver, 20).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, '#raw-download > div.content > div > div:nth-child(1)')))
     html = driver.page_source
     driver.quit()
 
-    new = ''
+    # 식단표 파일 이름 파싱
+    fileName = ''
     soup = BeautifulSoup(html, 'html.parser')
     for li in soup.select('#raw-download > div.content > div > div:nth-child(1)'):
-        new = li.text
+        fileName = li.text
 
+    # 파일 이름 리턴
     return {
         'statusCode': 200,
         'body': json.dumps({
-            "message" : new
-        })
+            "fileName" : fileName
+        }, ensure_ascii=False)
     }
