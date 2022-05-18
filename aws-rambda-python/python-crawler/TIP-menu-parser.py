@@ -4,7 +4,7 @@ import requests
 from urllib import parse
 
 def lambda_handler(event, context):
-    fileName = '학생식당 식단표(5.16).xlsx'
+    fileName = event[fileName]
     downloadUrl = 'http://contents.kpu.ac.kr/Download/engine_host=ibook.kpu.ac.kr&bookcode=M85SE8ZKVYSG&file_name={0}&file_no=1'.format(parse.quote(fileName))
 
     with open('/tmp/temp.xlsx', "wb") as file:
