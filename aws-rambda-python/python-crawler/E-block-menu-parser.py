@@ -49,8 +49,8 @@ def lambda_handler(event, context):
                 else:
                     dinner.append(temp)
 
-        menu[day + ' ' + "중식"] = lunch
-        menu[day + ' ' + "석식"] = dinner
+        menu[day + " 중식"] = lunch
+        menu[day + " 석식"] = dinner
 
     return {
         'statusCode': 200,
