@@ -29,8 +29,8 @@ def lambda_handler(event, context):
     # 크롬 드라이버 로드
     driver = webdriver.Chrome(chrome_options=chrome_options, executable_path='/opt/python/bin/chromedriver')
 
-    # E동 / TIP 구분 -> 추후 json으로 받을 예정
-    classify = 0
+    # E동 / TIP 구분
+    classify = event["classify"]
     url = ''
 
     # 0-> E동
