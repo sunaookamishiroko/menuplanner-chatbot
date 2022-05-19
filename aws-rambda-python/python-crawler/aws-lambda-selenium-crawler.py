@@ -30,7 +30,7 @@ def lambda_handler(event, context):
     driver = webdriver.Chrome(chrome_options=chrome_options, executable_path='/opt/python/bin/chromedriver')
 
     # E동 / TIP 구분
-    classify = event["classify"]
+    classify = event["queryStringParameters"]["classify"]
     url = ''
 
     # 0-> E동
