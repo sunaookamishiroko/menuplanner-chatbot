@@ -3,9 +3,11 @@ import pandas as pd
 import requests
 from urllib import parse
 
+
 def lambda_handler(event, context):
     fileName = event["queryStringParameters"]["fileName"]
-    downloadUrl = 'http://contents.kpu.ac.kr/Download/engine_host=ibook.kpu.ac.kr&bookcode=HLDE4UJWP2VS&file_name={0}&file_no=1'.format(parse.quote(fileName))
+    downloadUrl = 'http://contents.kpu.ac.kr/Download/engine_host=ibook.kpu.ac.kr&bookcode=HLDE4UJWP2VS&file_name={0}&file_no=1'.format(
+        parse.quote(fileName))
 
     with open('/tmp/temp.xlsx', "wb") as file:
         response = requests.get(downloadUrl)
@@ -31,8 +33,11 @@ def lambda_handler(event, context):
     for start, i, day in menuIndex:
         count = 0
         signal = False
-        lunch = []
-        dinner = []
+        tempdict = {
+            "lunch": [],
+            "dinner": []
+        }
+
         for j in range(start, len(df.index)):
             temp = str(df.iloc[j, i])
             if temp == '0':
@@ -45,12 +50,11 @@ def lambda_handler(event, context):
                     count += 1
                     signal = True
                 if count == 1:
-                    lunch.append(temp)
+                    tempdict["lunch"].append(temp)
                 else:
-                    dinner.append(temp)
+                    tempdict["dinner"].append(temp)
 
-        menu[day + " 중식"] = lunch
-        menu[day + " 석식"] = dinner
+        menu[day] = tempdict
 
     return {
         'statusCode': 200,

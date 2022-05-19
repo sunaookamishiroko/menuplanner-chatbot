@@ -3,9 +3,11 @@ import pandas as pd
 import requests
 from urllib import parse
 
+
 def lambda_handler(event, context):
     fileName = event["queryStringParameters"]["fileName"]
-    downloadUrl = 'http://contents.kpu.ac.kr/Download/engine_host=ibook.kpu.ac.kr&bookcode=M85SE8ZKVYSG&file_name={0}&file_no=1'.format(parse.quote(fileName))
+    downloadUrl = 'http://contents.kpu.ac.kr/Download/engine_host=ibook.kpu.ac.kr&bookcode=M85SE8ZKVYSG&file_name={0}&file_no=1'.format(
+        parse.quote(fileName))
 
     with open('/tmp/temp.xlsx', "wb") as file:
         response = requests.get(downloadUrl)
@@ -31,9 +33,11 @@ def lambda_handler(event, context):
     for start, i, day in menuIndex:
         count = 0
         signal = False
-        breakFast = []
-        lunch = []
-        dinner = []
+        tempdict = {
+            "breakFast": [],
+            "lunch": [],
+            "dinner": []
+        }
 
         for j in range(start, len(df.index)):
             temp = str(df.iloc[j, i])
@@ -52,15 +56,13 @@ def lambda_handler(event, context):
                         signal = True
 
                     if count <= 2:
-                        breakFast.append(temp)
+                        tempdict["breakFast"].append(temp)
                     elif count == 3:
-                        lunch.append(temp)
+                        tempdict["lunch"].append(temp)
                     elif count == 4:
-                        dinner.append(temp)
+                        tempdict["dinner"].append(temp)
 
-        menu[day + ' 조식'] = breakFast
-        menu[day + ' 중식'] = lunch
-        menu[day + ' 석식'] = dinner
+        menu[day] = tempdict
 
     return {
         'statusCode': 200,
