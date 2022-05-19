@@ -6,9 +6,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class EblockMenuController {
 
-    
-
     @GetMapping("/get-eblock-menu")
     public void getEblockMenu() {
+
     }
 }
