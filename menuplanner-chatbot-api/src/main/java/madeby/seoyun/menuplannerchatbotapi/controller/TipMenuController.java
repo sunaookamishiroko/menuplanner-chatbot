@@ -1,16 +1,15 @@
 package madeby.seoyun.menuplannerchatbotapi.controller;
 
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class TipMenuController {
 
-    public TipMenuController() {
+    @GetMapping("/get-tip-menu")
+    public void getTipMenu() {
     }
 
-    public void getTipMenu() {
-    
-    }
 
 
 }
