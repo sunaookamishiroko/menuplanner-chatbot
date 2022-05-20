@@ -16,6 +16,7 @@ public class GetDatabaseApplicationRunner implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception{
-        getWeekMenuService.getDataAndSaveToDatabase();
+        if (!getWeekMenuService.isDatabaseDataExist())
+            getWeekMenuService.getDataAndSaveToDatabase();
     }
 }

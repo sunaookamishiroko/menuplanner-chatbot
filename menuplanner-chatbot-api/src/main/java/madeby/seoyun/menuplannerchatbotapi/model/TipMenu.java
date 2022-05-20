@@ -1,5 +1,6 @@
 package madeby.seoyun.menuplannerchatbotapi.model;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -12,6 +13,7 @@ public class TipMenu implements Serializable {
     @Id
     private String date;
 
+    @Column(name = "breakFast")
     private String breakFast;
     private String lunch;
     private String dinner;

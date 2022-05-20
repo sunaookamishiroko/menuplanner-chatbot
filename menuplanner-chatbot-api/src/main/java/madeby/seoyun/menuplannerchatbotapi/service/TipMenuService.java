@@ -55,8 +55,8 @@ public class TipMenuService {
         dinnerTime.put("description", "16:50 - 18:50");
 
         JSONObject price = new JSONObject();
-        dinnerTime.put("title", "가격");
-        dinnerTime.put("description", "5000원");
+        price.put("title", "가격");
+        price.put("description", "5000원");
 
         itemList.add(breakFastTime);
         itemList.add(lunchTime);
@@ -81,23 +81,21 @@ public class TipMenuService {
 
     private String getTodayTipMenu() {
         String today = getDate();
-        System.out.println(today);
         TipMenu tipMenu = repository.findByDate(today);
 
         String breakFast = "미운영";
         String lunch = "미운영";
         String dinner = "미운영";
 
-        if (!tipMenu.getBreakFast().equals("")) {
-            breakFast = tipMenu.getBreakFast();
-        }
+        if (tipMenu != null) {
+            if (!tipMenu.getBreakFast().equals(""))
+                breakFast = tipMenu.getBreakFast();
 
-        if (!tipMenu.getLunch().equals("")) {
-            lunch = tipMenu.getLunch();
-        }
+            if (!tipMenu.getLunch().equals(""))
+                lunch = tipMenu.getLunch();
 
-        if (!tipMenu.getDinner().equals("")) {
-            dinner = tipMenu.getDinner();
+            if (!tipMenu.getDinner().equals(""))
+                dinner = tipMenu.getDinner();
         }
 
         String menu = "조식\n\n" + breakFast + "\n\n중식\n\n" + lunch + "\n\n석식\n\n" + dinner;
