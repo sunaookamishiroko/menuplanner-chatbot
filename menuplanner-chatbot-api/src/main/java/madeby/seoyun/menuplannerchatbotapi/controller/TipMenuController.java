@@ -1,5 +1,6 @@
 package madeby.seoyun.menuplannerchatbotapi.controller;
 
+import madeby.seoyun.menuplannerchatbotapi.service.GetWeekMenuService;
 import madeby.seoyun.menuplannerchatbotapi.service.TipMenuService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,6 +18,9 @@ public class TipMenuController {
 
     @PostMapping("/get-tip-menu")
     public String getTipMenu() {
-        return service.makeJson();
+        if (GetWeekMenuService.isGetWeekMenuServiceWorking)
+            return service.makeWorkingNowJson();
+        else
+            return service.makeMenuJson();
     }
 }

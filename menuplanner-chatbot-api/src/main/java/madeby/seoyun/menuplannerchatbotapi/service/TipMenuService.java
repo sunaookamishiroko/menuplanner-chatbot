@@ -19,7 +19,7 @@ public class TipMenuService {
         this.repository = repository;
     }
 
-    public String makeJson() {
+    public String makeMenuJson() {
         JSONObject json = new JSONObject();
         json.put("version", "2.0");
 
@@ -77,6 +77,27 @@ public class TipMenuService {
         itemCard.put("buttonLayout", "vertical");
 
         return json.toJSONString().replace("\\/", "/") ;
+    }
+
+    public String makeWorkingNowJson() {
+        JSONObject json = new JSONObject();
+        json.put("version", "2.0");
+
+        JSONObject template = new JSONObject();
+        json.put("template", template);
+
+        JSONArray outputs = new JSONArray();
+        template.put("outputs", outputs);
+
+        JSONObject noNamed = new JSONObject();
+        outputs.add(noNamed);
+
+        JSONObject simpleText = new JSONObject();
+        noNamed.put("simpleText", simpleText);
+
+        simpleText.put("text", "지금은 서버가 정보 수집중이에요! 잠시후에 다시 시도해주세요!");
+
+        return json.toJSONString();
     }
 
     private String getTodayTipMenu() {

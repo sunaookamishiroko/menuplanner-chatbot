@@ -1,5 +1,6 @@
 package madeby.seoyun.menuplannerchatbotapi.service;
 
+import madeby.seoyun.menuplannerchatbotapi.MenuplannerChatbotApiApplication;
 import madeby.seoyun.menuplannerchatbotapi.model.EblockMenu;
 import madeby.seoyun.menuplannerchatbotapi.model.FileName;
 import madeby.seoyun.menuplannerchatbotapi.model.TipMenu;
@@ -21,6 +22,7 @@ public class GetWeekMenuService {
     private EblockMenuRepository eblockMenuRepository;
     private FileNameRepository fileNameRepository;
     private final RestTemplate restTemplate;
+    public static boolean isGetWeekMenuServiceWorking = false;
 
     @Autowired
     public GetWeekMenuService(TipMenuRepository tipMenuRepository, EblockMenuRepository eblockMenuRepository,
@@ -33,7 +35,7 @@ public class GetWeekMenuService {
 
     @Scheduled(cron = "0 0 0 * * 1")
     public void getDataAndSaveToDatabase() {
-
+        isGetWeekMenuServiceWorking = true;
         String eBlockFileName = getFileName("0").get("fileName");
         String tipBlockFileName = getFileName("1").get("fileName");
 
@@ -50,6 +52,7 @@ public class GetWeekMenuService {
         saveToTipDatabase(tipMenu, tipMenuKeys);
         saveToFileNameDatabase(eBlockFileName, tipBlockFileName);
         System.out.println("DB 저장 완료");
+        isGetWeekMenuServiceWorking = false;
     }
 
     public boolean isDatabaseDataExist() {
