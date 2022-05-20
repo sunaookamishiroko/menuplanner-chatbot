@@ -30,20 +30,45 @@ def lambda_handler(event, context):
     driver = webdriver.Chrome(chrome_options=chrome_options, executable_path='/opt/python/bin/chromedriver')
 
     # E동 / TIP 구분
-    classify = event["queryStringParameters"]["classify"]
-    url = ''
+    try:
+        classify = event["queryStringParameters"]["classify"]
+    except Exception as e:
+        return {
+            'statusCode': 404,
+            'body': json.dumps({
+                "message": "classify가 존재하지 않습니다.",
+                "error": str(e)
+            }, ensure_ascii=False)
+        }
 
     # 0-> E동
     # 1-> TIP
-    if classify == 0:
+    if classify == '0':
         url = 'https://ibook.kpu.ac.kr/Viewer/menu01'
-    elif classify == 1:
+    elif classify == '1':
         url = 'https://ibook.kpu.ac.kr/Viewer/menu02'
+    else:
+        return {
+            'statusCode': 404,
+            'body': json.dumps({
+                "message": "잘못된 classify입니다.",
+                "error": ""
+            }, ensure_ascii=False)
+        }
 
-    driver.get(url)
-    WebDriverWait(driver, 20).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, '#raw-download > div.content > div > div:nth-child(1)')))
-    html = driver.page_source
-    driver.quit()
+    try:
+        driver.get(url)
+        WebDriverWait(driver, 20).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, '#raw-download > div.content > div > div:nth-child(1)')))
+        html = driver.page_source
+        driver.quit()
+    except Exception as e:
+        return {
+            'statusCode': 404,
+            'body': json.dumps({
+                "message": "selenium 에러",
+                "error": str(e)
+            }, ensure_ascii=False)
+        }
 
     # 식단표 파일 이름 파싱
     fileName = ''
