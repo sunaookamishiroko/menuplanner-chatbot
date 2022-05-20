@@ -16,6 +16,15 @@ public class TipMenu implements Serializable {
     private String lunch;
     private String dinner;
 
+    public TipMenu() {}
+
+    public TipMenu(String date, String breakFast, String lunch, String dinner) {
+        this.date = date;
+        this.breakFast = breakFast;
+        this.lunch = lunch;
+        this.dinner = dinner;
+    }
+
     public String getDate() {
         return date;
     }

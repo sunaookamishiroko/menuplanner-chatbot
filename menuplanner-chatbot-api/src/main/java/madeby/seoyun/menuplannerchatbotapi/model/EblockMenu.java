@@ -15,6 +15,14 @@ public class EblockMenu implements Serializable {
     private String lunch;
     private String dinner;
 
+    public EblockMenu() {}
+
+    public EblockMenu(String date, String lunch, String dinner) {
+        this.date = date;
+        this.lunch = lunch;
+        this.dinner = dinner;
+    }
+
     public String getDate() {
         return date;
     }
