@@ -1,9 +1,7 @@
 package madeby.seoyun.menuplannerchatbotapi.service;
 
 import madeby.seoyun.menuplannerchatbotapi.model.EblockMenu;
-import madeby.seoyun.menuplannerchatbotapi.model.TipMenu;
 import madeby.seoyun.menuplannerchatbotapi.repository.EblockMenuRepository;
-import madeby.seoyun.menuplannerchatbotapi.repository.TipMenuRepository;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +9,12 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 
+/**
+ * EblockMenuController의 E동 식당 메뉴 요청 처리를 위한 서비스
+ *
+ * @filename : EblockMenuService.java
+ * @Author : lsy
+ */
 @Service
 public class EblockMenuService {
     private EblockMenuRepository repository;

@@ -6,6 +6,12 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.io.Serializable;
 
+/**
+ * 각각 식당들의 메뉴 파일 이름에 대한 DB 스키마 정의
+ *
+ * @filename : FileName.java
+ * @Author : lsy
+ */
 @Entity
 @Table(name = "fileNames")
 public class FileName implements Serializable {

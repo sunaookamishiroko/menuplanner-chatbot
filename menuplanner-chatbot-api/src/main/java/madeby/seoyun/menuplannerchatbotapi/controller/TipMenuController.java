@@ -6,6 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * TIP 지하 식당 메뉴에 대한 요청을 처리하는 controller
+ *
+ * @filename : TipMenuController.java
+ * @Author : lsy
+ */
 @RestController
 public class TipMenuController {
 
@@ -16,6 +22,14 @@ public class TipMenuController {
         this.service = service;
     }
 
+    /**
+     * TIP 지하 식당 메뉴 / 시간 / 가격을
+     * 카카오 챗봇 메시지 형식을 문자열로 반환한다.
+     *
+     * @ param : 없음
+     * @ return : 카카오 챗봇 메시지 형식의 문자열
+     * @ exception 예외사항
+     */
     @PostMapping("/get-tip-menu")
     public String getTipMenu() {
         if (GetWeekMenuService.isGetWeekMenuServiceWorking)

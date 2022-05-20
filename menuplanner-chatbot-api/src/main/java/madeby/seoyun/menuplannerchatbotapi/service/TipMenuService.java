@@ -8,8 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.Locale;
 
+/**
+ * TipMenuController의 TIP 지하 식당 메뉴 요청 처리를 위한 서비스
+ *
+ * @filename : TipMenuService.java
+ * @Author : lsy
+ */
 @Service
 public class TipMenuService {
     private TipMenuRepository repository;

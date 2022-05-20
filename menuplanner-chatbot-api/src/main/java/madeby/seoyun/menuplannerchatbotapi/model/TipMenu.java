@@ -6,6 +6,12 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.io.Serializable;
 
+/**
+ * TIP 지하 식당 메뉴에 대한 DB 스키마 정의
+ *
+ * @filename : TipMenu.java
+ * @Author : lsy
+ */
 @Entity
 @Table(name = "tipMenu")
 public class TipMenu implements Serializable {

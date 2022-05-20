@@ -5,6 +5,12 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.io.Serializable;
 
+/**
+ * E동 식당 메뉴에 대한 DB 스키마 정의
+ *
+ * @filename : EblockMenu.java
+ * @Author : lsy
+ */
 @Entity
 @Table(name = "eBlockMenu")
 public class EblockMenu implements Serializable {
