@@ -16,7 +16,7 @@ public class EblockMenuController {
     }
 
     @GetMapping("/get-eblock-menu")
-    public void getEblockMenu() {
-        
+    public String getEblockMenu() {
+        return service.makeJson();
     }
 }

@@ -54,9 +54,14 @@ public class TipMenuService {
         dinnerTime.put("title", "석식 시간");
         dinnerTime.put("description", "16:50 - 18:50");
 
+        JSONObject price = new JSONObject();
+        dinnerTime.put("title", "가격");
+        dinnerTime.put("description", "5000원");
+
         itemList.add(breakFastTime);
         itemList.add(lunchTime);
         itemList.add(dinnerTime);
+        itemList.add(price);
 
         itemCard.put("itemListAlignment", "right");
 
