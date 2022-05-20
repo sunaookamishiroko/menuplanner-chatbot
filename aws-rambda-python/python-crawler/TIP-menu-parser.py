@@ -61,9 +61,9 @@ def lambda_handler(event, context):
                         tempdict["lunch"].append(temp)
                     elif count == 4:
                         tempdict["dinner"].append(temp)
-        tempdict["breakFast"] = '\\n'.join(s for s in tempdict["breakFast"])
-        tempdict["lunch"] = '\\n'.join(s for s in tempdict["lunch"])
-        tempdict["dinner"] = '\\n'.join(s for s in tempdict["dinner"])
+        tempdict["breakFast"] = '\n'.join(s for s in tempdict["breakFast"])
+        tempdict["lunch"] = '\n'.join(s for s in tempdict["lunch"])
+        tempdict["dinner"] = '\n'.join(s for s in tempdict["dinner"])
         menu[day] = tempdict
 
     return {

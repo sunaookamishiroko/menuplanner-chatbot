@@ -53,8 +53,8 @@ def lambda_handler(event, context):
                     tempdict["lunch"].append(temp)
                 else:
                     tempdict["dinner"].append(temp)
-        tempdict["lunch"] = '\\n'.join(s for s in tempdict["lunch"])
-        tempdict["dinner"] = '\\n'.join(s for s in tempdict["dinner"])
+        tempdict["lunch"] = '\n'.join(s for s in tempdict["lunch"])
+        tempdict["dinner"] = '\n'.join(s for s in tempdict["dinner"])
         menu[day] = tempdict
 
     return {
