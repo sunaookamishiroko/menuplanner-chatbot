@@ -52,8 +52,8 @@ public class EblockMenuService {
         dinnerTime.put("description", "16:50 - 18:40");
 
         JSONObject price = new JSONObject();
-        dinnerTime.put("title", "가격");
-        dinnerTime.put("description", "5500원");
+        price.put("title", "가격");
+        price.put("description", "5500원");
 
         itemList.add(lunchTime);
         itemList.add(dinnerTime);
@@ -77,18 +77,17 @@ public class EblockMenuService {
 
     private String getTodayTipMenu() {
         String today = getDate();
-        System.out.println(today);
         EblockMenu eblockMenu = repository.findByDate(today);
 
         String lunch = "미운영";
         String dinner = "미운영";
 
-        if (!eblockMenu.getLunch().equals("")) {
-            lunch = eblockMenu.getLunch();
-        }
+        if (eblockMenu != null) {
+            if (!eblockMenu.getLunch().equals(""))
+                lunch = eblockMenu.getLunch();
 
-        if (!eblockMenu.getDinner().equals("")) {
-            dinner = eblockMenu.getDinner();
+            if (!eblockMenu.getDinner().equals(""))
+                dinner = eblockMenu.getDinner();
         }
 
         String menu = "중식\n\n" + lunch + "\n\n석식\n\n" + dinner;
