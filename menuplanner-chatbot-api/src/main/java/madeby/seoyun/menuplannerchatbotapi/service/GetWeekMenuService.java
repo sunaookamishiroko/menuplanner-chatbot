@@ -1,8 +1,10 @@
 package madeby.seoyun.menuplannerchatbotapi.service;
 
 import madeby.seoyun.menuplannerchatbotapi.model.EblockMenu;
+import madeby.seoyun.menuplannerchatbotapi.model.FileName;
 import madeby.seoyun.menuplannerchatbotapi.model.TipMenu;
 import madeby.seoyun.menuplannerchatbotapi.repository.EblockMenuRepository;
+import madeby.seoyun.menuplannerchatbotapi.repository.FileNameRepository;
 import madeby.seoyun.menuplannerchatbotapi.repository.TipMenuRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -10,20 +12,21 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Service
 public class GetWeekMenuService {
     private TipMenuRepository tipMenuRepository;
     private EblockMenuRepository eblockMenuRepository;
+    private FileNameRepository fileNameRepository;
     private final RestTemplate restTemplate;
 
     @Autowired
-    public GetWeekMenuService(TipMenuRepository tipMenuRepository, EblockMenuRepository eblockMenuRepository, RestTemplateBuilder restTemplateBuilder) {
+    public GetWeekMenuService(TipMenuRepository tipMenuRepository, EblockMenuRepository eblockMenuRepository,
+                              FileNameRepository fileNameRepository, RestTemplateBuilder restTemplateBuilder) {
         this.tipMenuRepository = tipMenuRepository;
         this.eblockMenuRepository = eblockMenuRepository;
+        this.fileNameRepository = fileNameRepository;
         this.restTemplate = restTemplateBuilder.build();
     }
 
@@ -43,8 +46,17 @@ public class GetWeekMenuService {
 
         saveToEblockDatabase(eBlockMenu, eBlockMenuKeys);
         saveToTipDatabase(tipMenu, tipMenuKeys);
-
+        saveToFileNameDatabase(eBlockFileName, tipBlockFileName);
         System.out.println("DB 저장 완료");
+    }
+
+    public boolean isDatabaseDataExist() {
+        if (fileNameRepository.findByName("0") != null
+                && fileNameRepository.findByName("1") != null) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private Map<String, String> getFileName(String num) {
@@ -106,6 +118,12 @@ public class GetWeekMenuService {
         }
 
         System.out.println("TIP 메뉴 DB에 저장완료");
+    }
+
+    private void saveToFileNameDatabase(String eBlockFileName, String tipBlockFileName) {
+        fileNameRepository.save(new FileName("0", eBlockFileName));
+        fileNameRepository.save(new FileName("1", tipBlockFileName));
+        System.out.println("파일 이름 DB에 저장완료");
     }
 
 }
