@@ -8,6 +8,7 @@ import madeby.seoyun.menuplannerchatbotapi.repository.FileNameRepository;
 import madeby.seoyun.menuplannerchatbotapi.repository.TipMenuRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -30,6 +31,7 @@ public class GetWeekMenuService {
         this.restTemplate = restTemplateBuilder.build();
     }
 
+    @Scheduled(cron = "0 0 0 * * 1")
     public void getDataAndSaveToDatabase() {
 
         String eBlockFileName = getFileName("0").get("fileName");
@@ -53,6 +55,18 @@ public class GetWeekMenuService {
     public boolean isDatabaseDataExist() {
         if (fileNameRepository.findByName("0") != null
                 && fileNameRepository.findByName("1") != null) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean isRecentData() {
+        String eBlockFileName = getFileName("0").get("fileName");
+        String tipBlockFileName = getFileName("1").get("fileName");
+
+        if (eBlockFileName.equals(fileNameRepository.findByName("0"))
+                && tipBlockFileName.equals(fileNameRepository.findByName("1"))) {
             return true;
         } else {
             return false;
