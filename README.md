@@ -9,7 +9,7 @@
 - [챗봇 바로 가기](https://pf.kakao.com/_hwWLb)
 
 ## Architecture
-<img src="./temp_structure.jpg">
+<img src="./Architecture.png">
 
 ## Tech Stack
 
