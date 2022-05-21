@@ -3,8 +3,6 @@
 사용된 라이브러리 목록들입니다.
 
 - selenium 3.13.0
-- setuptools 39.2.0
-- wheel 0.31.1
 - requests 2.27.1
 - beautifulsoup4 4.11.1
 - pandas 1.4.2, pytz 2022.1
