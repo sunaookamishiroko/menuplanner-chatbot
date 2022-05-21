@@ -6,6 +6,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 
@@ -24,6 +25,13 @@ public class EblockMenuService {
         this.repository = repository;
     }
 
+    /**
+     * E동 식당 메뉴 / 시간 / 가격 / 식단표 주소를
+     * 카카오 챗봇 메시지 형식의 json으로 만든 후 문자열로 반환한다.
+     *
+     * @ param : 없음
+     * @ return String : 카카오 챗봇 메시지 형식 json 문자열
+     */
     public String makeMenuJson() {
         JSONObject json = new JSONObject();
         json.put("version", "2.0");
@@ -40,7 +48,7 @@ public class EblockMenuService {
         JSONObject itemCard = new JSONObject();
         noNamed.put("itemCard", itemCard);
 
-        itemCard.put("title", getTodayTipMenu());
+        itemCard.put("title", getTodayEblockMenu());
         itemCard.put("description", "");
         itemCard.put("head", "오늘(" + getDate() + ") 메뉴");
 
@@ -79,6 +87,13 @@ public class EblockMenuService {
         return json.toJSONString().replace("\\/", "/") ;
     }
 
+    /**
+     * 서버가 메뉴 파싱중일 때 잠시 후에 다시 시도해달라는 메시지를
+     * 카카오 챗봇 메시지 형식의 json으로 만든 후 문자열로 반환한다.
+     *
+     * @ param : 없음
+     * @ return String : 카카오 챗봇 메시지 형식 json 문자열
+     */
     public String makeWorkingNowJson() {
         JSONObject json = new JSONObject();
         json.put("version", "2.0");
@@ -100,7 +115,14 @@ public class EblockMenuService {
         return json.toJSONString();
     }
 
-    private String getTodayTipMenu() {
+    /**
+     * 서버의 날짜의 E동 식당 메뉴를 DB에서 가져와서 메뉴 정보 문자열 생성 후 반환한다.
+     *
+     * @ param : 없음
+     * @ return String : 메뉴 정보를 합친 문자열
+     */
+    @Transactional(readOnly = true)
+    public String getTodayEblockMenu() {
         String today = getDate();
         EblockMenu eblockMenu = repository.findByDate(today);
 
@@ -120,6 +142,12 @@ public class EblockMenuService {
         return menu;
     }
 
+    /**
+     * 오늘의 날짜 (월, 일)을 "x월 x일"의 형태로 반환한다.
+     *
+     * @ param : 없음
+     * @ return String : "x월 x일" 형태의 문자열
+     */
     private String getDate() {
         LocalDate now = LocalDate.now();
 

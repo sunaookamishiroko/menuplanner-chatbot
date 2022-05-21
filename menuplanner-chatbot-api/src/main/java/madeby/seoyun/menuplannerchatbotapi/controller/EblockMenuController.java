@@ -1,7 +1,7 @@
 package madeby.seoyun.menuplannerchatbotapi.controller;
 
 import madeby.seoyun.menuplannerchatbotapi.service.EblockMenuService;
-import madeby.seoyun.menuplannerchatbotapi.service.GetWeekMenuService;
+import madeby.seoyun.menuplannerchatbotapi.component.ParsingMenuData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,16 +23,16 @@ public class EblockMenuController {
     }
 
     /**
-     * E동 식당 메뉴 / 시간 / 가격을
-     * 카카오 챗봇 메시지 형식을 문자열로 반환한다.
+     * E동 식당 메뉴 관련 정보의 json을 문자열 형태로 응답한다.
+     * 서버가 메뉴를 파싱하고 있을 때는 잠시 후에 다시 시도해달라는 문자열을 응답한다.
      *
      * @ param : 없음
-     * @ return : 카카오 챗봇 메시지 형식의 문자열
+     * @ return String : 카카오 챗봇 메시지 형식의 문자열
      * @ exception 예외사항
      */
     @PostMapping("/get-eblock-menu")
     public String getEblockMenu() {
-        if (GetWeekMenuService.isGetWeekMenuServiceWorking)
+        if (ParsingMenuData.isGetWeekMenuServiceWorking)
             return service.makeWorkingNowJson();
         else
             return service.makeMenuJson();
