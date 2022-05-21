@@ -1,5 +1,6 @@
 package madeby.seoyun.menuplannerchatbotapi.service;
 
+import madeby.seoyun.menuplannerchatbotapi.exceptions.DatabaseConnectFailedException;
 import madeby.seoyun.menuplannerchatbotapi.model.EblockMenu;
 import madeby.seoyun.menuplannerchatbotapi.repository.EblockMenuRepository;
 import org.json.simple.JSONArray;
@@ -8,7 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.TextStyle;
+import java.util.Locale;
 
 /**
  * EblockMenuController의 E동 식당 메뉴 요청 처리를 위한 서비스
@@ -19,10 +24,12 @@ import java.time.LocalDate;
 @Service
 public class EblockMenuService {
     private EblockMenuRepository repository;
+    private LocalDate now;
 
     @Autowired
     public EblockMenuService(EblockMenuRepository repository) {
         this.repository = repository;
+        now  = LocalDate.now();
     }
 
     /**
@@ -50,7 +57,7 @@ public class EblockMenuService {
 
         itemCard.put("title", getTodayEblockMenu());
         itemCard.put("description", "");
-        itemCard.put("head", "오늘(" + getDate() + ") 메뉴");
+        itemCard.put("head", "오늘(" + getDate() + " " + getDayOfWeek() + ") 메뉴");
 
         JSONArray itemList = new JSONArray();
         itemCard.put("itemList", itemList);
@@ -124,7 +131,13 @@ public class EblockMenuService {
     @Transactional(readOnly = true)
     public String getTodayEblockMenu() {
         String today = getDate();
-        EblockMenu eblockMenu = repository.findByDate(today);
+        EblockMenu eblockMenu;
+
+        try {
+            eblockMenu = repository.findByDate(today);
+        } catch (Exception e) {
+            throw new DatabaseConnectFailedException("서버의 응답이 없습니다. 개발자에게 문의해주세요! code:1");
+        }
 
         String lunch = "미운영";
         String dinner = "미운영";
@@ -137,7 +150,7 @@ public class EblockMenuService {
                 dinner = eblockMenu.getDinner();
         }
 
-        String menu = "중식\n\n" + lunch + "\n\n석식\n\n" + dinner;
+        String menu = "중식 ▼\n\n" + lunch + "\n\n석식 ▼\n\n" + dinner;
 
         return menu;
     }
@@ -149,12 +162,20 @@ public class EblockMenuService {
      * @ return String : "x월 x일" 형태의 문자열
      */
     private String getDate() {
-        LocalDate now = LocalDate.now();
-
         String today = Integer.toString(now.getMonth().getValue()) + "월 "
                 + Integer.toString(now.getDayOfMonth()) + "일";
-
         return today;
+    }
+
+    /**
+     * 오늘의 요일을 "월", "화" 등의 형태로 반환한다.
+     *
+     * @ param : 없음
+     * @ return String : "월", "화" 등의 형태의 문자열
+     */
+    private String getDayOfWeek() {
+        DayOfWeek dayOfWeek = now.getDayOfWeek();
+        return dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.KOREAN);
     }
 
 
