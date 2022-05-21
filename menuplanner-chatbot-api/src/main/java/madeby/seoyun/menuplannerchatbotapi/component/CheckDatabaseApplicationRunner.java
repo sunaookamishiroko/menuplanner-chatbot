@@ -30,8 +30,7 @@ public class CheckDatabaseApplicationRunner implements ApplicationRunner {
      */
     @Override
     public void run(ApplicationArguments args) {
-//        if (!getWeekMenuService.isDatabaseDataExist() || !getWeekMenuService.isRecentData())
-//            getWeekMenuService.getDataAndSaveToDatabase();
-        parsingMenuData.getDataAndSaveToDatabase();
+        if (!parsingMenuData.isDatabaseDataExist() || !parsingMenuData.isRecentData())
+            parsingMenuData.getDataAndSaveToDatabase();
     }
 }

@@ -15,9 +15,7 @@ import java.time.format.DateTimeFormatter;
 public class LogData {
     private static LocalDateTime localDateTime;
 
-    public LogData() {
-        this.localDateTime = LocalDateTime.now();
-    }
+    public LogData() {}
 
     /**
      * 메시지와 메서드 이름을 받아서 날짜 시간과 함께 출력한다.
