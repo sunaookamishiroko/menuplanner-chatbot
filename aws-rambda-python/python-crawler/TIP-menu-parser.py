@@ -95,11 +95,11 @@ def lambda_handler(event, context):
                         signal = True
 
                     if count <= 2:
-                        tempdict["breakFast"].append(temp)
+                        tempdict["breakFast"].append('- ' + temp)
                     elif count == 3:
-                        tempdict["lunch"].append(temp)
+                        tempdict["lunch"].append('- ' + temp)
                     elif count == 4:
-                        tempdict["dinner"].append(temp)
+                        tempdict["dinner"].append('- ' + temp)
 
         tempdict["breakFast"] = '\n'.join(s for s in tempdict["breakFast"])
         tempdict["lunch"] = '\n'.join(s for s in tempdict["lunch"])
