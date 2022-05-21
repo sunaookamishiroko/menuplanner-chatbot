@@ -28,7 +28,6 @@ public class EblockMenuController {
      *
      * @ param : 없음
      * @ return String : 카카오 챗봇 메시지 형식의 문자열
-     * @ exception 예외사항
      */
     @PostMapping("/get-eblock-menu")
     public String getEblockMenu() {

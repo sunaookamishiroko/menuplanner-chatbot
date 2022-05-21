@@ -46,7 +46,7 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
     }
 
     /**
-     * DatabaseConnectFailedException exception handler
+     * 메시지로 보낼 문자열을 받아 카카오 챗봇 메시지 형식 json 문자열을 만든다.
      *
      * @ param String msg : 메시지로 보낼 문자열
      * @ return String : 카카오 챗봇 메시지 형식 json 문자열

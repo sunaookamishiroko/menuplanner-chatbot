@@ -170,8 +170,7 @@ public class TipMenuService {
      * @ return String : "x월 x일" 형태의 문자열
      */
     private String getDate() {
-        String today = Integer.toString(now.getMonth().getValue()) + "월 "
-                + Integer.toString(now.getDayOfMonth()) + "일";
+        String today = now.getMonth().getValue() + "월 " + now.getDayOfMonth() + "일";
         return today;
     }
 
