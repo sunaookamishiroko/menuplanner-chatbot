@@ -28,6 +28,6 @@ public class LogData {
      */
     public static void printLog(String msg, String method) {
         System.out.println(localDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-                + " : " + msg + " from : " + method);
+                + " : " + msg + " : " + method);
     }
 }
