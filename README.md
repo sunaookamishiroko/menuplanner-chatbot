@@ -8,8 +8,13 @@
 - [챗봇 바로 가기](https://pf.kakao.com/_hwWLb)
 
 ## Architecture
-<img src="./Architecture.png">
+<img src="./architecture.png">
+<img src="./database_architecture.png">
 
+## Screenshot
+```
+TODO
+```
 ## Tech Stack
 ```
 TODO
