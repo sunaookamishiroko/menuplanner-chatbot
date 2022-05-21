@@ -1,5 +1,6 @@
 package madeby.seoyun.menuplannerchatbotapi.component;
 
+import madeby.seoyun.menuplannerchatbotapi.exceptions.ParsingDataFailedException;
 import madeby.seoyun.menuplannerchatbotapi.model.EblockMenu;
 import madeby.seoyun.menuplannerchatbotapi.model.FileName;
 import madeby.seoyun.menuplannerchatbotapi.model.TipMenu;
@@ -30,7 +31,7 @@ public class ParsingMenuData {
     private FileNameRepository fileNameRepository;
     private final RestTemplate restTemplate;
 
-    public static boolean isGetWeekMenuServiceWorking = false;
+    public static boolean isParsingMenuDataWorking = false;
 
     @Autowired
     public ParsingMenuData(TipMenuRepository tipMenuRepository, EblockMenuRepository eblockMenuRepository,
@@ -44,7 +45,7 @@ public class ParsingMenuData {
     /**
      * 매주 월요일 0시 0분마다 올려놓은 aws lambda api를 이용해서
      * 메뉴 파일 이름, 메뉴 파싱을 해서 새로운 데이터를 DB에 저장한다.
-     * 파싱중일 때는 isGetWeekMenuServiceWorking 시그널을 이용해 클라이언트에게 정보 수집중이라 알린다.
+     * 파싱중일 때는 isParsingMenuDataWorking 시그널을 이용해 정보 수집중 상태로 바꾼다.
      * 서버를 실행할 때도 조건에 맞으면 실행된다. -> CheckDatabaseApplicationRunner.java 참조
      * api에 관한 자세한 내용은 aws-rambda-python 폴더에 존재하는 소스 코드 참조
      *
@@ -54,7 +55,7 @@ public class ParsingMenuData {
     @Scheduled(cron = "0 0 0 * * 1")
     public void getDataAndSaveToDatabase() {
         LogData.printLog("파싱 작업 시작...", "getDataAndSaveToDatabase");
-        isGetWeekMenuServiceWorking = true;
+        isParsingMenuDataWorking = true;
 
         String eBlockFileName = getFileName("0").get("fileName");
         String tipBlockFileName = getFileName("1").get("fileName");
@@ -72,7 +73,7 @@ public class ParsingMenuData {
         saveToTipDatabase(tipMenu, tipMenuKeys);
         saveToFileNameDatabase(eBlockFileName, tipBlockFileName);
 
-        isGetWeekMenuServiceWorking = false;
+        isParsingMenuDataWorking = false;
         LogData.printLog("파싱 작업 완료", "getDataAndSaveToDatabase");
     }
 
@@ -85,6 +86,7 @@ public class ParsingMenuData {
     @Transactional(readOnly = true)
     public boolean isDatabaseDataExist() {
         LogData.printLog("DB에 파일 이름 존재하는지 확인...", "isDatabaseDataExist");
+
         if (fileNameRepository.findByName("0") != null
                 && fileNameRepository.findByName("1") != null) {
             LogData.printLog("파일 이름이 존재합니다", "isDatabaseDataExist");
@@ -104,7 +106,7 @@ public class ParsingMenuData {
      * @ return boolean : 두 개의 파일 이름이 DB에 있는 것과 모두 같으면 true, 아니라면 false
      */
     @Transactional(readOnly = true)
-    public boolean isRecentData() throws RuntimeException {
+    public boolean isRecentData() {
         LogData.printLog("최신 데이터인지 확인...", "isRecentData");
 
         String eBlockFileName = getFileName("0").get("fileName");
@@ -124,9 +126,10 @@ public class ParsingMenuData {
      * aws lambda api를 이용하여 파일 이름을 파싱한다.
      *
      * @ param String num : "0" -> E동 메뉴 파일 이름 파싱 | "1" -> TIP 메뉴 파일 이름 파싱
-     * @ return Map<String, String> : json 형식의 데이터를 map으로 받아서 반환
+     * @ return Map<String, String> temp : json 형식의 데이터를 map으로 받아서 반환
+     * @ exception ParsingDataFailedException : 파싱에 실패할 경우 발생
      */
-    private Map<String, String> getFileName(String num) throws RuntimeException{
+    private Map<String, String> getFileName(String num) {
         if(num.equals("0"))
             LogData.printLog("E동 메뉴 파일 이름 파싱중...", "getFileName");
         else if(num.equals("1"))
@@ -135,36 +138,64 @@ public class ParsingMenuData {
         String url = ""
                 + num;
 
+        Map<String, String> temp;
+
+        try {
+            temp = this.restTemplate.getForObject(url, HashMap.class);
+        } catch(Exception e) {
+            throw new ParsingDataFailedException(e.getMessage() + " : " + "getFileName");
+        }
+
         LogData.printLog("파싱 완료", "getFileName");
-        return this.restTemplate.getForObject(url, HashMap.class);
+        return temp;
     }
 
     /**
      * aws lambda api를 이용하여 E동 식당 메뉴를 파싱한다.
      *
      * @ param String fileName : E동 식당 메뉴의 엑셀 파일 이름
-     * @ return Map<String, Map<String, String>> : json 형식의 데이터를 map으로 받아서 반환
+     * @ return Map<String, Map<String, String>> temp : json 형식의 데이터를 map으로 받아서 반환
+     * @ exception ParsingDataFailedException : 파싱에 실패할 경우 발생
      */
-    private Map<String, Map<String, String>> getEblockMenu(String fileName) throws RuntimeException{
+    private Map<String, Map<String, String>> getEblockMenu(String fileName) {
         LogData.printLog("E동 메뉴 파싱중...", "getEblockMenu");
+
         String url = ""
                 + fileName;
+        Map<String, Map<String, String>> temp;
+
+        try {
+            temp = this.restTemplate.getForObject(url, HashMap.class);
+        } catch(Exception e) {
+            throw new ParsingDataFailedException(e.getMessage() + " : " + "getEblockMenu");
+        }
+
         LogData.printLog("파싱 완료", "getEblockMenu");
-        return this.restTemplate.getForObject(url, HashMap.class);
+        return temp;
     }
 
     /**
      * aws lambda api를 이용하여 TIP 식당 메뉴를 파싱한다.
      *
      * @ param String fileName : TIP 지하 식당 메뉴의 엑셀 파일 이름
-     * @ return Map<String, Map<String, String>> : json 형식의 데이터를 map으로 받아서 반환
+     * @ return Map<String, Map<String, String>> temp : json 형식의 데이터를 map으로 받아서 반환
+     * @ exception ParsingDataFailedException : 파싱에 실패할 경우 발생
      */
-    private Map<String, Map<String, String>> getTipMenu(String fileName) throws RuntimeException{
+    private Map<String, Map<String, String>> getTipMenu(String fileName) {
         LogData.printLog("TIP 메뉴 파싱중...", "getTipMenu");
+
         String url = ""
                 + fileName;
+        Map<String, Map<String, String>> temp;
+
+        try {
+            temp = this.restTemplate.getForObject(url, HashMap.class);
+        } catch(Exception e) {
+            throw new ParsingDataFailedException(e.getMessage() + " : " + "getTipMenu");
+        }
+
         LogData.printLog("파싱 완료", "getTipMenu");
-        return this.restTemplate.getForObject(url, HashMap.class);
+        return temp;
     }
 
     /**
@@ -172,13 +203,14 @@ public class ParsingMenuData {
      *
      * @ param Map<String, Map<String, String>> eBlockMenu : 파싱한 메뉴 json 데이터
      * @ param Object[] eBlockMenuKeys : json map 데이터의 key가 담긴 데이터
-     * 메뉴의 날짜(5월 15일...5월 16일..)들이 담겨있음.
+     *                                   메뉴의 날짜(5월 15일...5월 16일..)들이 담겨있음.
      * @ return : 없음
      */
     @Transactional(rollbackFor = Exception.class)
     public void saveToEblockDatabase(
             Map<String, Map<String, String>> eBlockMenu, Object[] eBlockMenuKeys) {
         LogData.printLog("E동 메뉴 DB에 저장중...", "saveToEblockDatabase");
+
         eblockMenuRepository.deleteAll();
 
         for(int i = 0; i < eBlockMenuKeys.length; i++) {
@@ -198,13 +230,14 @@ public class ParsingMenuData {
      *
      * @ param Map<String, Map<String, String>> eBlockMenu : 파싱한 메뉴 json 데이터
      * @ param Object[] eBlockMenuKeys : json map 데이터의 key가 담긴 데이터
-     * 메뉴의 날짜(5월 15일...5월 16일..)들이 담겨있음.
+     *                                   메뉴의 날짜(5월 15일...5월 16일..)들이 담겨있음.
      * @ return : 없음
      */
     @Transactional(rollbackFor = Exception.class)
     public void saveToTipDatabase(
             Map<String, Map<String, String>> tipMenu, Object[] tipMenuKeys) {
         LogData.printLog("TIP 메뉴 DB에 저장중...", "saveToTipDatabase");
+
         tipMenuRepository.deleteAll();
 
         for(int i = 0; i < tipMenuKeys.length; i++) {
@@ -230,8 +263,10 @@ public class ParsingMenuData {
     @Transactional(rollbackFor = Exception.class)
     public void saveToFileNameDatabase(String eBlockFileName, String tipBlockFileName) {
         LogData.printLog("메뉴 이름 DB에 저장중...", "saveToFileNameDatabase");
+
         fileNameRepository.save(new FileName("0", eBlockFileName));
         fileNameRepository.save(new FileName("1", tipBlockFileName));
+
         LogData.printLog("저장 완료", "saveToFileNameDatabase");
     }
 

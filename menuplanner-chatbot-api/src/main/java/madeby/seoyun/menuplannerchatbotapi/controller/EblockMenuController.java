@@ -32,7 +32,7 @@ public class EblockMenuController {
      */
     @PostMapping("/get-eblock-menu")
     public String getEblockMenu() {
-        if (ParsingMenuData.isGetWeekMenuServiceWorking)
+        if (ParsingMenuData.isParsingMenuDataWorking)
             return service.makeWorkingNowJson();
         else
             return service.makeMenuJson();

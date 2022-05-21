@@ -32,7 +32,7 @@ public class TipMenuController {
      */
     @PostMapping("/get-tip-menu")
     public String getTipMenu() {
-        if (ParsingMenuData.isGetWeekMenuServiceWorking)
+        if (ParsingMenuData.isParsingMenuDataWorking)
             return service.makeWorkingNowJson();
         else
             return service.makeMenuJson();
