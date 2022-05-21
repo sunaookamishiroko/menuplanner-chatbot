@@ -5,7 +5,7 @@ spring:
     url: jdbc:mysql://127.0.0.1:3306/test?useSSL=false&characterEncoding=UTF-8&serverTimezone=Asia/Seoul
     username: root
     hikari:
-      connection-timeout: 3500
+      connection-timeout: 3300
   jpa:
     database: mysql
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
