@@ -24,7 +24,3 @@
 - numpy는 aws 계층 사용 ( AWSLambda-Python38-SciPy1x )
 - openpyxl는 https://github.com/keithrozario/Klayers/blob/master/deployments/python3.8/arns/eu-central-1.csv 에서 찾을 수 있음
 - ARN지정 : arn:aws:lambda:ap-northeast-2:770693421928:layer:Klayers-python38-openpyxl:9
-
-
-- selenium -> python 3.6
-- 나머지 라이브러리 -> python 3.8
