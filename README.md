@@ -1,10 +1,10 @@
 # 🍚 menuplanner-chatbot
-<div>
+<p>
   <img src="https://img.shields.io/badge/Amazon AWS-232F3E?style=flat&logo=Amazon AWS&logoColor=white">
   <img src="https://img.shields.io/badge/Spring Boot-6DB33F?style=flat&logo=Spring Boot&logoColor=white">
   <img src="https://img.shields.io/badge/Python-3776AB?style=flat&logo=Python&logoColor=white">
   <img src="https://img.shields.io/badge/KaKaoTalk-FFCD00?style=flat&logo=KaKaoTalk&logoColor=white">
-</div>
+</p>
 
 한국공학대학교 TIP 지하 식당과 E동 식당의 메뉴를 알려주는 챗봇 프로젝트
 
