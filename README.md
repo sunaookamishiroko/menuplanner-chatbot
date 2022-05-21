@@ -13,8 +13,8 @@
 
 ## Screenshot
 <div>
-  <img height=1050 src="./images/tip.png">
-  <img height=1050 src="./images/eblock.png">
+  <img height=700 src="./images/tip.png">
+  <img height=700 src="./images/eblock.png">
 </div>
 
 ## Tech Stack
