@@ -10,9 +10,7 @@ TODO
 
 ## Architecture
 
-```
-TODO
-```
+<img src="/images/aws-rambda-python_architecture.png">
 
 ## How it works?
 
