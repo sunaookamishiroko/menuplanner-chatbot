@@ -28,7 +28,6 @@ public class EblockMenuService {
     @Autowired
     public EblockMenuService(EblockMenuRepository repository) {
         this.repository = repository;
-        now  = LocalDate.now();
     }
 
     /**
@@ -161,6 +160,7 @@ public class EblockMenuService {
      * @ return String : "x월 x일" 형태의 문자열
      */
     private String getDate() {
+        now = LocalDate.now();
         String today = now.getMonth().getValue() + "월 " + now.getDayOfMonth() + "일";
         return today;
     }
@@ -172,6 +172,7 @@ public class EblockMenuService {
      * @ return String : "월", "화" 등의 형태의 문자열
      */
     private String getDayOfWeek() {
+        now = LocalDate.now();
         DayOfWeek dayOfWeek = now.getDayOfWeek();
         return dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.KOREAN);
     }

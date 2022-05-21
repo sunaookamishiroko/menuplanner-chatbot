@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.DayOfWeek;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.time.format.TextStyle;
 import java.util.Locale;
 
@@ -23,12 +23,11 @@ import java.util.Locale;
 @Service
 public class TipMenuService {
     private TipMenuRepository repository;
-    private LocalDateTime now;
+    private LocalDate now;
 
     @Autowired
     public TipMenuService(TipMenuRepository repository) {
         this.repository = repository;
-        now = LocalDateTime.now();
     }
 
     /**
@@ -170,6 +169,7 @@ public class TipMenuService {
      * @ return String : "x월 x일" 형태의 문자열
      */
     private String getDate() {
+        now = LocalDate.now();
         String today = now.getMonth().getValue() + "월 " + now.getDayOfMonth() + "일";
         return today;
     }
@@ -181,6 +181,7 @@ public class TipMenuService {
      * @ return String : "월", "화" 등의 형태의 문자열
      */
     private String getDayOfWeek() {
+        now = LocalDate.now();
         DayOfWeek dayOfWeek = now.getDayOfWeek();
         return dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.KOREAN);
     }
