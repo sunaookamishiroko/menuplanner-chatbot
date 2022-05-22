@@ -44,7 +44,54 @@ public class ParsingMenuData {
     }
 
     /**
-     * 월요일 7시 0분 0초마다 올려놓은 aws lambda api를 이용해서
+     * 월요일 0시 0분 0초가 되면, isMondayAndBeforeParsing 시그널을 true로 바꾼다.
+     * 이 시그널은 컨트롤러가 식당으로부터 메뉴가 올라올 때까지 기다려달라는 json을 보내게 한다.
+     *
+     * @ param : 없음
+     * @ return : 없음
+     */
+    @Scheduled(cron = "0 0 0 * * 1")
+    public void setMondaySignalTrue() {
+        LogData.printLog("isMondayAndBeforeParsing = true", "setMondaySignalTrue");
+        isMondayAndBeforeParsing = true;
+    }
+
+    /**
+     * 월요일 7시 0분 0초가 되면 메뉴가 올라왔는지 체크하기 시작한다.
+     * 체크는 DB의 파일 이름과 파싱해서 얻은 파일을 1분마다 비교한다.
+     * 만약 파일 이름이 같지 않다면 새 메뉴가 올라온 것으로
+     * isMondayAndBeforeParsing 시그널을 false로 바꾸고,
+     * getDataAndSaveToDatabase() 메서드를 실행한다.
+     *
+     * @ param : 없음
+     * @ return : 없음
+     * @ exception : 쓰레드가 오작동하면 exception 발생
+     */
+    @Scheduled(cron = "0 0 7 * * 1")
+    @Transactional(readOnly = true)
+    public void checkUploadMenu() throws Exception{
+        LogData.printLog("메뉴를 체크하기 시작합니다...", "checkUploadMenu");
+        String eBlockFileName = fileNameRepository.findByName("0").getFileName();
+        String tipFileName = fileNameRepository.findByName("1").getFileName();
+
+        boolean isEblockUploaded = false;
+        boolean isTipUploaded = false;
+
+        while(!isEblockUploaded || !isTipUploaded) {
+            String newEblockFileName = getFileName("0").get("fileName");
+            String newTipFileName = getFileName("1").get("fileName");
+
+            if (!newEblockFileName.equals(eBlockFileName)) isEblockUploaded = true;
+            if (!newTipFileName.equals(tipFileName)) isTipUploaded = true;
+            Thread.sleep(60000);
+        }
+        LogData.printLog("메뉴 업로드가 감지되었습니다...", "checkUploadMenu");
+        isMondayAndBeforeParsing = false;
+        LogData.printLog("isMondayAndBeforeParsing = false", "checkUploadMenu");
+        getDataAndSaveToDatabase();
+    }
+
+    /**
      * 메뉴 파일 이름, 메뉴 파싱을 해서 새로운 데이터를 DB에 저장한다.
      * 파싱중일 때는 isParsingMenuDataWorking 시그널을 이용해 정보 수집중 상태로 바꾼다.
      * 서버를 실행할 때도 조건에 맞으면 실행된다. -> CheckDatabaseApplicationRunner.java 참조
@@ -53,52 +100,28 @@ public class ParsingMenuData {
      * @ param : 없음
      * @ return : 없음
      */
-    @Scheduled(cron = "0 0 7 * * 1")
     public void getDataAndSaveToDatabase() {
         LogData.printLog("파싱 작업 시작...", "getDataAndSaveToDatabase");
         isParsingMenuDataWorking = true;
 
         String eBlockFileName = getFileName("0").get("fileName");
-        String tipBlockFileName = getFileName("1").get("fileName");
+        String tipFileName = getFileName("1").get("fileName");
 
         Map<String, Map<String, String>> eBlockMenu =
                 getEblockMenu(eBlockFileName);
 
         Map<String, Map<String, String>> tipMenu =
-                getTipMenu(tipBlockFileName);
+                getTipMenu(tipFileName);
 
         Object[] eBlockMenuKeys = eBlockMenu.keySet().toArray();
         Object[] tipMenuKeys = tipMenu.keySet().toArray();
 
         saveToEblockDatabase(eBlockMenu, eBlockMenuKeys);
         saveToTipDatabase(tipMenu, tipMenuKeys);
-        saveToFileNameDatabase(eBlockFileName, tipBlockFileName);
+        saveToFileNameDatabase(eBlockFileName, tipFileName);
 
         isParsingMenuDataWorking = false;
         LogData.printLog("파싱 작업 완료", "getDataAndSaveToDatabase");
-    }
-
-    /**
-     * 월요일 0시 0분 0초가 되면, isMondayAndBeforeParsing 시그널을 true로 바꾼다.
-     * 이 시그널은 컨트롤러가 식당으로부터 메뉴가 올라올 때까지 기다려달라는 json을 보내게 한다.
-     *
-     * @ param : 없음
-     * @ return : 없음
-     */
-    @Scheduled(cron = "0 0 0 * * 1")
-    private void setMondaySignalTrue() {
-        isMondayAndBeforeParsing = true;
-    }
-
-    /**
-     * 월요일 7시 0분 0초가 되면, isMondayAndBeforeParsing 시그널을 false로 바꾼다.
-     *
-     * @ param : 없음
-     * @ return : 없음
-     */
-    @Scheduled(cron = "0 0 7 * * 1")
-    private void setMondaySignalFalse() {
-        isMondayAndBeforeParsing = false;
     }
 
     /**
