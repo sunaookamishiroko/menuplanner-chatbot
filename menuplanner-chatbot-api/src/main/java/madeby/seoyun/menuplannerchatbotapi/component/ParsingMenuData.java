@@ -32,6 +32,7 @@ public class ParsingMenuData {
     private final RestTemplate restTemplate;
 
     public static boolean isParsingMenuDataWorking = false;
+    public static boolean isMondayAndBeforeParsing = false;
 
     @Autowired
     public ParsingMenuData(TipMenuRepository tipMenuRepository, EblockMenuRepository eblockMenuRepository,
@@ -52,7 +53,7 @@ public class ParsingMenuData {
      * @ param : 없음
      * @ return : 없음
      */
-    @Scheduled(cron = "0 0 0 * * 1")
+    @Scheduled(cron = "0 0 7 * * 1")
     public void getDataAndSaveToDatabase() {
         LogData.printLog("파싱 작업 시작...", "getDataAndSaveToDatabase");
         isParsingMenuDataWorking = true;
@@ -75,6 +76,29 @@ public class ParsingMenuData {
 
         isParsingMenuDataWorking = false;
         LogData.printLog("파싱 작업 완료", "getDataAndSaveToDatabase");
+    }
+
+    /**
+     * 월요일 0시 0분 0초가 되면, isMondayAndBeforeParsing 시그널을 true로 바꾼다.
+     * 이 시그널은 컨트롤러가 식당으로부터 메뉴가 올라올 때까지 기다려달라는 json을 보내게 한다.
+     *
+     * @ param : 없음
+     * @ return : 없음
+     */
+    @Scheduled(cron = "0 0 0 * * 1")
+    private void setMondaySignalTrue() {
+        isMondayAndBeforeParsing = true;
+    }
+
+    /**
+     * 월요일 7시 0분 0초가 되면, isMondayAndBeforeParsing 시그널을 false로 바꾼다.
+     *
+     * @ param : 없음
+     * @ return : 없음
+     */
+    @Scheduled(cron = "0 0 7 * * 1")
+    private void setMondaySignalFalse() {
+        isMondayAndBeforeParsing = false;
     }
 
     /**
