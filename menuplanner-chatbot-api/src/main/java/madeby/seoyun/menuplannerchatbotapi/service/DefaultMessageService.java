@@ -42,7 +42,7 @@ public class DefaultMessageService {
     }
 
     /**
-     * 월요일 0시가 되어 메뉴 정보가 없을 때 아침에 다시 시도해달라는 메시지를
+     * 월요일 0시가 되어 메뉴 정보가 없을 때 기다려달라는 메시지를
      * 카카오 챗봇 메시지 형식의 json으로 만든 후 문자열로 반환한다.
      *
      * @ param : 없음
@@ -64,7 +64,7 @@ public class DefaultMessageService {
         JSONObject simpleText = new JSONObject();
         noNamed.put("simpleText", simpleText);
 
-        simpleText.put("text", "아직 메뉴 정보가 수집되지 않았습니다! " +
+        simpleText.put("text", "아직 금주의 메뉴가 업로드되지 않았습니다! " +
                 "식당으로부터 메뉴가 올라올 때까지 기다려주세요.");
 
         return json.toJSONString();
