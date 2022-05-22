@@ -1,5 +1,6 @@
 package madeby.seoyun.menuplannerchatbotapi.service;
 
+import madeby.seoyun.menuplannerchatbotapi.component.GetDateTime;
 import madeby.seoyun.menuplannerchatbotapi.exceptions.DatabaseConnectFailedException;
 import madeby.seoyun.menuplannerchatbotapi.model.EblockMenu;
 import madeby.seoyun.menuplannerchatbotapi.repository.EblockMenuRepository;
@@ -8,11 +9,6 @@ import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.format.TextStyle;
-import java.util.Locale;
 
 /**
  * EblockMenuController의 E동 식당 메뉴 요청 처리를 위한 서비스
@@ -23,7 +19,6 @@ import java.util.Locale;
 @Service
 public class EblockMenuService {
     private EblockMenuRepository repository;
-    private LocalDate now;
 
     @Autowired
     public EblockMenuService(EblockMenuRepository repository) {
@@ -55,7 +50,7 @@ public class EblockMenuService {
 
         itemCard.put("title", getTodayEblockMenu());
         itemCard.put("description", "");
-        itemCard.put("head", "오늘(" + getDate() + " " + getDayOfWeek() + ") 메뉴");
+        itemCard.put("head", "오늘(" + GetDateTime.getDate() + " " + GetDateTime.getDayOfWeek() + ") 메뉴");
 
         JSONArray itemList = new JSONArray();
         itemCard.put("itemList", itemList);
@@ -128,7 +123,7 @@ public class EblockMenuService {
      */
     @Transactional(readOnly = true)
     public String getTodayEblockMenu() {
-        String today = getDate();
+        String today = GetDateTime.getDate();
         EblockMenu eblockMenu;
 
         try {
@@ -152,30 +147,4 @@ public class EblockMenuService {
 
         return menu;
     }
-
-    /**
-     * 오늘의 날짜 (월, 일)을 "x월 x일"의 형태로 반환한다.
-     *
-     * @ param : 없음
-     * @ return String : "x월 x일" 형태의 문자열
-     */
-    private String getDate() {
-        now = LocalDate.now();
-        String today = now.getMonth().getValue() + "월 " + now.getDayOfMonth() + "일";
-        return today;
-    }
-
-    /**
-     * 오늘의 요일을 "월", "화" 등의 형태로 반환한다.
-     *
-     * @ param : 없음
-     * @ return String : "월", "화" 등의 형태의 문자열
-     */
-    private String getDayOfWeek() {
-        now = LocalDate.now();
-        DayOfWeek dayOfWeek = now.getDayOfWeek();
-        return dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.KOREAN);
-    }
-
-
 }

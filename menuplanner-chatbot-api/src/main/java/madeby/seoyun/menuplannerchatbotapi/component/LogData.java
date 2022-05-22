@@ -2,7 +2,6 @@ package madeby.seoyun.menuplannerchatbotapi.component;
 
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
@@ -13,7 +12,6 @@ import java.time.format.DateTimeFormatter;
  */
 @Component
 public class LogData {
-    private static LocalDateTime localDateTime;
 
     public LogData() {}
 
@@ -25,7 +23,7 @@ public class LogData {
      * @ return : 없음
      */
     public static void printLog(String msg, String method) {
-        System.out.println(localDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+        System.out.println(GetDateTime.localDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
                 + " : " + msg + " : " + method);
     }
 }
