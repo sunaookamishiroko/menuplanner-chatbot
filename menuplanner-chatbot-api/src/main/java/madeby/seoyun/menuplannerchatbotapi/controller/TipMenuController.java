@@ -1,6 +1,7 @@
 package madeby.seoyun.menuplannerchatbotapi.controller;
 
 import madeby.seoyun.menuplannerchatbotapi.component.ParsingMenuData;
+import madeby.seoyun.menuplannerchatbotapi.service.DefaultMessageService;
 import madeby.seoyun.menuplannerchatbotapi.service.TipMenuService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,11 +16,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class TipMenuController {
 
-    private TipMenuService service;
+    private TipMenuService tipMenuService;
+    private DefaultMessageService defaultMessageService;
 
     @Autowired
-    public TipMenuController(TipMenuService service) {
-        this.service = service;
+    public TipMenuController(TipMenuService tipMenuService, DefaultMessageService defaultMessageService) {
+        this.tipMenuService = tipMenuService;
+        this.defaultMessageService = defaultMessageService;
     }
 
     /**
@@ -32,8 +35,10 @@ public class TipMenuController {
     @PostMapping("/get-tip-menu")
     public String getTipMenu() {
         if (ParsingMenuData.isParsingMenuDataWorking)
-            return service.makeWorkingNowJson();
+            return defaultMessageService.makeWorkingNowJson();
+        else if (ParsingMenuData.isMondayAndBeforeParsing)
+            return defaultMessageService.makeMondayJson();
         else
-            return service.makeMenuJson();
+            return tipMenuService.makeMenuJson();
     }
 }

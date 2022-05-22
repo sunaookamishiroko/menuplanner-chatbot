@@ -1,5 +1,6 @@
 package madeby.seoyun.menuplannerchatbotapi.controller;
 
+import madeby.seoyun.menuplannerchatbotapi.service.DefaultMessageService;
 import madeby.seoyun.menuplannerchatbotapi.service.EblockMenuService;
 import madeby.seoyun.menuplannerchatbotapi.component.ParsingMenuData;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,12 +16,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class EblockMenuController {
 
-    private EblockMenuService service;
+    private EblockMenuService eblockMenuService;
+    private DefaultMessageService defaultMessageService;
 
     @Autowired
-    public EblockMenuController(EblockMenuService service) {
-        this.service = service;
+    public EblockMenuController(EblockMenuService eblockMenuService, DefaultMessageService defaultMessageService) {
+        this.eblockMenuService = eblockMenuService;
+        this.defaultMessageService = defaultMessageService;
     }
+
 
     /**
      * E동 식당 메뉴 관련 정보의 json을 문자열 형태로 응답한다.
@@ -32,8 +36,10 @@ public class EblockMenuController {
     @PostMapping("/get-eblock-menu")
     public String getEblockMenu() {
         if (ParsingMenuData.isParsingMenuDataWorking)
-            return service.makeWorkingNowJson();
+            return defaultMessageService.makeWorkingNowJson();
+        else if (ParsingMenuData.isMondayAndBeforeParsing)
+            return defaultMessageService.makeMondayJson();
         else
-            return service.makeMenuJson();
+            return eblockMenuService.makeMenuJson();
     }
 }

@@ -93,34 +93,6 @@ public class TipMenuService {
     }
 
     /**
-     * 서버가 메뉴 파싱중일 때 잠시 후에 다시 시도해달라는 메시지를
-     * 카카오 챗봇 메시지 형식의 json으로 만든 후 문자열로 반환한다.
-     *
-     * @ param : 없음
-     * @ return String : 카카오 챗봇 메시지 형식 json 문자열
-     */
-    public String makeWorkingNowJson() {
-        JSONObject json = new JSONObject();
-        json.put("version", "2.0");
-
-        JSONObject template = new JSONObject();
-        json.put("template", template);
-
-        JSONArray outputs = new JSONArray();
-        template.put("outputs", outputs);
-
-        JSONObject noNamed = new JSONObject();
-        outputs.add(noNamed);
-
-        JSONObject simpleText = new JSONObject();
-        noNamed.put("simpleText", simpleText);
-
-        simpleText.put("text", "지금은 서버가 정보 수집중이에요! 잠시후에 다시 시도해주세요!");
-
-        return json.toJSONString();
-    }
-
-    /**
      * 서버의 날짜의 TIP 지하 식당 메뉴를 DB에서 가져와서 메뉴 정보 문자열 생성 후 반환한다.
      *
      * @ param : 없음
