@@ -44,7 +44,7 @@ public class ParsingMenuData {
     }
 
     /**
-     * 매주 월요일 0시 0분마다 올려놓은 aws lambda api를 이용해서
+     * 월요일 7시 0분 0초마다 올려놓은 aws lambda api를 이용해서
      * 메뉴 파일 이름, 메뉴 파싱을 해서 새로운 데이터를 DB에 저장한다.
      * 파싱중일 때는 isParsingMenuDataWorking 시그널을 이용해 정보 수집중 상태로 바꾼다.
      * 서버를 실행할 때도 조건에 맞으면 실행된다. -> CheckDatabaseApplicationRunner.java 참조
