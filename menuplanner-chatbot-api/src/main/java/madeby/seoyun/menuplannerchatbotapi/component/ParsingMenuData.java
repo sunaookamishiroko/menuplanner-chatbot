@@ -133,7 +133,7 @@ public class ParsingMenuData {
      * @ return : 없음
      */
     public void getDataAndSaveToDatabaseEblock() {
-        LogData.printLog("E동 파싱 작업 시작...", "getDataAndSaveToDatabaseEblockOnly");
+        LogData.printLog("E동 파싱 작업 시작...", "getDataAndSaveToDatabaseEblock");
         isParsingMenuDataWorking = true;
 
         Map<String, String> eBlockFileInfo = getFileInfo("0");
@@ -150,7 +150,7 @@ public class ParsingMenuData {
 
         isParsingMenuDataWorking = false;
         isMondayAndBeforeParsingEblock = false;
-        LogData.printLog("파싱 작업 완료", "getDataAndSaveToDatabaseEblockOnly");
+        LogData.printLog("파싱 작업 완료", "getDataAndSaveToDatabaseEblock");
     }
 
     /**
@@ -164,7 +164,7 @@ public class ParsingMenuData {
      * @ return : 없음
      */
     public void getDataAndSaveToDatabaseTip() {
-        LogData.printLog("TIP 파싱 작업 시작...", "getDataAndSaveToDatabaseTipOnly");
+        LogData.printLog("TIP 파싱 작업 시작...", "getDataAndSaveToDatabaseTip");
         isParsingMenuDataWorking = true;
 
         Map<String, String> tipFileInfo = getFileInfo("1");
@@ -181,7 +181,7 @@ public class ParsingMenuData {
 
         isParsingMenuDataWorking = false;
         isMondayAndBeforeParsingTIP = false;
-        LogData.printLog("파싱 작업 완료", "getDataAndSaveToDatabaseTipOnly");
+        LogData.printLog("파싱 작업 완료", "getDataAndSaveToDatabaseTip");
     }
 
     /**
