@@ -6,9 +6,13 @@ from selenium.webdriver.chrome.options import Options
 import json
 from bs4 import BeautifulSoup
 
+
 def lambda_handler(event, context):
     # chromium 세팅... 건들면 안됨
     chrome_options = Options()
+    chrome_options.add_argument("--incognito")
+    chrome_options.add_argument("--disable-setuid-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument('--headless')
     chrome_options.add_argument('--no-sandbox')
     chrome_options.add_argument('--disable-gpu')
@@ -58,7 +62,8 @@ def lambda_handler(event, context):
 
     try:
         driver.get(url)
-        WebDriverWait(driver, 20).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, '#raw-download > div.content > div > div:nth-child(1)')))
+        WebDriverWait(driver, 20).until(EC.presence_of_all_elements_located(
+            (By.CSS_SELECTOR, '#raw-download > div.content > div > div:nth-child(1)')))
         html = driver.page_source
         driver.quit()
     except Exception as e:
@@ -76,10 +81,16 @@ def lambda_handler(event, context):
     for li in soup.select('#raw-download > div.content > div > div:nth-child(1)'):
         fileName = li.text
 
+    # bookcode 파싱
+    bookCode = ''
+    for li in soup.select('#downloadForm > input[type=hidden]:nth-child(1)'):
+        bookCode = li.get('value')
+
     # 파일 이름 리턴
     return {
         'statusCode': 200,
         'body': json.dumps({
-            "fileName" : fileName
+            "fileName": fileName,
+            "bookCode": bookCode
         }, ensure_ascii=False)
     }
