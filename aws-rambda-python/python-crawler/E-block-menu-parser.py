@@ -8,18 +8,19 @@ def lambda_handler(event, context):
     # 파일 이름 파싱
     try:
         fileName = event["queryStringParameters"]["fileName"]
+        bookCode = event["queryStringParameters"]["bookCode"]
     except Exception as e:
         return {
             'statusCode': 404,
             'body': json.dumps({
-                "message": "fileName이 존재하지 않거나 잘못됐습니다.",
+                "message": "fileName, bookCode가 존재하지 않거나 잘못됐습니다.",
                 "error": str(e)
             }, ensure_ascii=False)
         }
 
     # xlsx 파일 다운로드 주소 만들기
-    downloadUrl = "http://contents.kpu.ac.kr/Download/engine_host=ibook.kpu.ac.kr&bookcode=HLDE4UJWP2VS&file_name={0}&file_no=1"\
-        .format(parse.quote(fileName))
+    downloadUrl = "http://contents.kpu.ac.kr/Download/engine_host=ibook.kpu.ac.kr&bookcode={0}&file_name={1}&file_no=1"\
+        .format(bookCode, parse.quote(fileName))
 
     # 파일 다운 받아서 저장하기
     try:
@@ -92,7 +93,6 @@ def lambda_handler(event, context):
                     tempdict["lunch"].append('- ' + temp)
                 else:
                     tempdict["dinner"].append('- ' + temp)
-
         tempdict["lunch"] = '\n'.join(s for s in tempdict["lunch"])
         tempdict["dinner"] = '\n'.join(s for s in tempdict["dinner"])
         menu[day] = tempdict
