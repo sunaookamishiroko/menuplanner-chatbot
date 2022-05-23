@@ -38,7 +38,7 @@ public class EblockMenuController {
     public String getEblockMenu() {
         if (ParsingMenuData.isParsingMenuDataWorking)
             return defaultMessageService.makeWorkingNowJson();
-        else if (ParsingMenuData.isMondayAndBeforeParsing)
+        else if (ParsingMenuData.isMondayAndBeforeParsingEblock)
             return defaultMessageService.makeMondayJson();
         else
             return eblockMenuService.makeMenuJson();

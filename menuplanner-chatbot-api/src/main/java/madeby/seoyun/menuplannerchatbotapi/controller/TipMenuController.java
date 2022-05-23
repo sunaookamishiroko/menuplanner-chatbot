@@ -37,7 +37,7 @@ public class TipMenuController {
     public String getTipMenu() {
         if (ParsingMenuData.isParsingMenuDataWorking)
             return defaultMessageService.makeWorkingNowJson();
-        else if (ParsingMenuData.isMondayAndBeforeParsing)
+        else if (ParsingMenuData.isMondayAndBeforeParsingTIP)
             return defaultMessageService.makeMondayJson();
         else
             return tipMenuService.makeMenuJson();
