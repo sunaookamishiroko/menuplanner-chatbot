@@ -85,22 +85,22 @@ public class ParsingMenuData {
         while(true) {
             if (!isEblockUploaded) {
                 newEblockFileName = getFileInfo("0").get("fileName");
+
+                if (!newEblockFileName.equals(eBlockFileName)) {
+                    LogData.printLog("메뉴 업로드가 감지되었습니다...", "checkUploadMenu");
+                    getDataAndSaveToDatabaseEblock();
+                    isEblockUploaded = true;
+                }
             }
 
             if (!isTipUploaded) {
                 newTipFileName = getFileInfo("1").get("fileName");
-            }
 
-            if (!newEblockFileName.equals(eBlockFileName)) {
-                LogData.printLog("메뉴 업로드가 감지되었습니다...", "checkUploadMenu");
-                getDataAndSaveToDatabaseEblock();
-                isEblockUploaded = true;
-            }
-
-            if (!newTipFileName.equals(tipFileName)) {
-                LogData.printLog("메뉴 업로드가 감지되었습니다...", "checkUploadMenu");
-                getDataAndSaveToDatabaseTip();
-                isTipUploaded = true;
+                if (!newTipFileName.equals(tipFileName)) {
+                    LogData.printLog("메뉴 업로드가 감지되었습니다...", "checkUploadMenu");
+                    getDataAndSaveToDatabaseTip();
+                    isTipUploaded = true;
+                }
             }
 
             if (isEblockUploaded && isTipUploaded) break;
