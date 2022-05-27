@@ -67,14 +67,19 @@ public class TipMenuService {
         dinnerTime.put("title", "석식 시간");
         dinnerTime.put("description", "16:50 - 18:50");
 
-        JSONObject price = new JSONObject();
-        price.put("title", "가격");
-        price.put("description", "5000원");
+        JSONObject breakFastPrice = new JSONObject();
+        breakFastPrice.put("title", "즉석셀프 라면/조식 가격");
+        breakFastPrice.put("description", "3000원/4000원");
+
+        JSONObject lunchDinnerPrice = new JSONObject();
+        lunchDinnerPrice.put("title", "중식/석식 가격");
+        lunchDinnerPrice.put("description", "5000원");
 
         itemList.add(breakFastTime);
         itemList.add(lunchTime);
         itemList.add(dinnerTime);
-        itemList.add(price);
+        itemList.add(breakFastPrice);
+        itemList.add(lunchDinnerPrice);
 
         itemCard.put("itemListAlignment", "right");
 
@@ -124,7 +129,8 @@ public class TipMenuService {
                 dinner = tipMenu.getDinner();
         }
 
-        String menu = "조식 ▼\n\n" + breakFast + "\n\n중식 ▼\n\n" + lunch + "\n\n석식 ▼\n\n" + dinner;
+        String menu = "조식 ▼\n\n" + "- 즉석셀프 라면(밥, 김치 포함)\n" + breakFast +
+                "\n\n중식 ▼\n\n" + lunch + "\n\n석식 ▼\n\n" + dinner;
 
         return menu;
     }
