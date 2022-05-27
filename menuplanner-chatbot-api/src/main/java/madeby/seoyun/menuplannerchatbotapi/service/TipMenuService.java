@@ -129,8 +129,10 @@ public class TipMenuService {
                 dinner = tipMenu.getDinner();
         }
 
-        String menu = "조식 ▼\n\n" + "- 즉석셀프 라면(밥, 김치 포함)\n" + breakFast +
-                "\n\n중식 ▼\n\n" + lunch + "\n\n석식 ▼\n\n" + dinner;
+        if (!breakFast.equals("미운영"))
+            breakFast = "- 즉석셀프 라면(밥, 김치 포함)\n" + breakFast;
+
+        String menu = "조식 ▼\n\n" + breakFast + "\n\n중식 ▼\n\n" + lunch + "\n\n석식 ▼\n\n" + dinner;
 
         return menu;
     }
