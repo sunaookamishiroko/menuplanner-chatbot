@@ -63,6 +63,8 @@ def lambda_handler(event, context):
         for j in range(len(df.index)):
             temp = str(df.iloc[j, i])
             if temp.find('일') != -1:
+                if temp.find('/') != -1:
+                    month = temp[:temp.find('/')] + '월'
                 menuIndex.append((j + 1, i, month + ' ' + temp[:temp.find('일') + 1]))
                 break
             elif temp.find('월') != -1:
@@ -82,24 +84,24 @@ def lambda_handler(event, context):
         for j in range(start, len(df.index)):
             temp = str(df.iloc[j, i])
             if temp == '0':
-                if count == 4:
+                if count == 5:
                     break
                 if signal:
                     signal = False
             else:
                 if temp == "미운영":
-                    count += 2
+                    count += 3
                     continue
                 else:
                     if not signal:
                         count += 1
                         signal = True
 
-                    if count <= 2:
+                    if count <= 3:
                         tempdict["breakFast"].append('- ' + temp)
-                    elif count == 3:
-                        tempdict["lunch"].append('- ' + temp)
                     elif count == 4:
+                        tempdict["lunch"].append('- ' + temp)
+                    elif count == 5:
                         tempdict["dinner"].append('- ' + temp)
 
         tempdict["breakFast"] = '\n'.join(s for s in tempdict["breakFast"])

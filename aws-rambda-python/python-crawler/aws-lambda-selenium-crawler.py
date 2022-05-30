@@ -27,7 +27,8 @@ def lambda_handler(event, context):
     chrome_options.add_argument('--ignore-certificate-errors')
     chrome_options.add_argument('--homedir=/tmp')
     chrome_options.add_argument('--disk-cache-dir=/tmp/cache-dir')
-    chrome_options.add_argument('user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.54 Safari/537.36')
+    chrome_options.add_argument(
+        'user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.54 Safari/537.36')
     chrome_options.binary_location = "/opt/python/bin/headless-chromium"
 
     # 크롬 드라이버 로드
