@@ -57,7 +57,7 @@ public class TipMenuService {
 
         JSONObject breakFastTime = new JSONObject();
         breakFastTime.put("title", "조식 시간");
-        breakFastTime.put("description", "8:30 - 9:30");
+        breakFastTime.put("description", "08:30 - 09:30");
 
         JSONObject lunchTime = new JSONObject();
         lunchTime.put("title", "중식 시간");
@@ -128,9 +128,6 @@ public class TipMenuService {
             if (!tipMenu.getDinner().equals(""))
                 dinner = tipMenu.getDinner();
         }
-
-        if (!breakFast.equals("미운영"))
-            breakFast = breakFast + "\n- ☆추가 코너\n- 즉석셀프 라면(밥, 김치 포함)\n";
 
         String menu = "조식 ▼\n\n" + breakFast + "\n\n중식 ▼\n\n" + lunch + "\n\n석식 ▼\n\n" + dinner;
 
