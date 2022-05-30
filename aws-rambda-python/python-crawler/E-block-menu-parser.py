@@ -65,6 +65,7 @@ def lambda_handler(event, context):
             if temp.find('일') != -1:
                 if temp.find('/') != -1:
                     month = temp[:temp.find('/')] + '월'
+                    temp = temp[temp.find('/') + 1:]
                 menuIndex.append((j + 1, i, month + ' ' + temp))
                 break
             elif temp.find('월') != -1:
