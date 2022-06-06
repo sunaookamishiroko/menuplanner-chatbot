@@ -85,24 +85,24 @@ def lambda_handler(event, context):
         for j in range(start, len(df.index)):
             temp = str(df.iloc[j, i])
             if temp == '0':
-                if count == 5:
+                if count == 3:
                     break
                 if signal:
                     signal = False
             else:
                 if temp == "미운영":
-                    count += 3
+                    count += 1
                     continue
                 else:
                     if not signal:
                         count += 1
                         signal = True
 
-                    if count <= 3:
+                    if count == 1:
                         tempdict["breakFast"].append('- ' + temp)
-                    elif count == 4:
+                    elif count == 2:
                         tempdict["lunch"].append('- ' + temp)
-                    elif count == 5:
+                    elif count == 3:
                         tempdict["dinner"].append('- ' + temp)
 
         tempdict["breakFast"] = '\n'.join(s for s in tempdict["breakFast"])
