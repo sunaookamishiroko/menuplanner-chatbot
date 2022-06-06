@@ -60,7 +60,7 @@ public class ParsingMenuData {
 
     /**
      * 월요일 7시 30분 0초가 되면 메뉴가 올라왔는지 체크하기 시작한다.
-     * 체크는 DB의 파일 이름과 파싱해서 얻은 파일을 5분마다 비교한다.
+     * 체크는 DB의 파일 이름과 파싱해서 얻은 파일을 10분마다 비교한다.
      * 만약 파일 이름이 같지 않다면 새 메뉴가 올라온 것으로
      * isMondayAndBeforeParsing 시그널을 false로 바꾸고,
      * getDataAndSaveToDatabase() 메서드를 실행한다.
@@ -70,7 +70,7 @@ public class ParsingMenuData {
      * @ exception : 쓰레드가 오작동하면 exception 발생
      */
     @Scheduled(cron = "0 30 7 * * 1")
-    @Transactional(readOnly = true)
+    @Transactional(rollbackFor = Exception.class)
     public void checkUploadMenu() throws Exception{
         LogData.printLog("메뉴 파일 업로드 체크를 시작합니다...", "checkUploadMenu");
         String eBlockFileName = fileNameRepository.findByName("0").getFileName();
@@ -104,7 +104,7 @@ public class ParsingMenuData {
             }
 
             if (isEblockUploaded && isTipUploaded) break;
-            else Thread.sleep(300000);
+            else Thread.sleep(600000);
         }
         LogData.printLog("메뉴 파일 업로드 체크 완료", "checkUploadMenu");
     }
