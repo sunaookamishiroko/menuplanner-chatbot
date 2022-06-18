@@ -108,11 +108,8 @@ public class EblockMenuService {
         String dinner = "미운영";
 
         if (eblockMenu != null) {
-            if (!eblockMenu.getLunch().equals(""))
-                lunch = eblockMenu.getLunch();
-
-            if (!eblockMenu.getDinner().equals(""))
-                dinner = eblockMenu.getDinner();
+            lunch = eblockMenu.getLunch();
+            dinner = eblockMenu.getDinner();
         }
 
         String menu = "중식 ▼\n\n" + lunch + "\n\n석식 ▼\n\n" + dinner;

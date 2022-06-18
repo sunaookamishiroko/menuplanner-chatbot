@@ -119,14 +119,9 @@ public class TipMenuService {
         String dinner = "미운영";
 
         if (tipMenu != null) {
-            if (!tipMenu.getBreakFast().equals(""))
-                breakFast = tipMenu.getBreakFast();
-
-            if (!tipMenu.getLunch().equals(""))
-                lunch = tipMenu.getLunch();
-
-            if (!tipMenu.getDinner().equals(""))
-                dinner = tipMenu.getDinner();
+            breakFast = tipMenu.getBreakFast();
+            lunch = tipMenu.getLunch();
+            dinner = tipMenu.getDinner();
         }
 
         String menu = "조식 ▼\n\n" + breakFast + "\n\n중식 ▼\n\n" + lunch + "\n\n석식 ▼\n\n" + dinner;
