@@ -19,7 +19,7 @@ def lambda_handler(event, context):
         }
 
     # xlsx 파일 다운로드 주소 만들기
-    downloadUrl = "http://contents.kpu.ac.kr/Download/engine_host=ibook.kpu.ac.kr&bookcode={0}&file_name={1}&file_no=1"\
+    downloadUrl = "http://contents.kpu.ac.kr/Download/engine_host=ibook.kpu.ac.kr&bookcode={0}&file_name={1}&file_no=1" \
         .format(bookCode, parse.quote(fileName))
 
     # 파일 다운 받아서 저장하기
@@ -92,13 +92,20 @@ def lambda_handler(event, context):
                 if not signal:
                     count += 1
                     signal = True
-                if count == 1:
-                    tempdict["lunch"].append('- ' + temp)
+
+                if temp == "미운영":
+                    dash = ''
                 else:
-                    tempdict["dinner"].append('- ' + temp)
+                    dash = '- '
+
+                if count == 1:
+                    tempdict["lunch"].append(dash + temp)
+                else:
+                    tempdict["dinner"].append(dash + temp)
+
         if count == 1:
-            tempdict["lunch"] = ''
-            tempdict["dinner"] = ''
+            tempdict["lunch"] = "미운영"
+            tempdict["dinner"] = "미운영"
         else:
             tempdict["lunch"] = '\n'.join(s for s in tempdict["lunch"])
             tempdict["dinner"] = '\n'.join(s for s in tempdict["dinner"])

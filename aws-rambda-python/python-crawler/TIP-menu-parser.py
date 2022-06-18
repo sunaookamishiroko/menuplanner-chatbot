@@ -14,12 +14,12 @@ def lambda_handler(event, context):
             'statusCode': 404,
             'body': json.dumps({
                 "message": "fileName, bookCode가 존재하지 않거나 잘못됐습니다.",
-                "error" : str(e)
+                "error": str(e)
             }, ensure_ascii=False)
         }
 
     # xlsx 파일 다운로드 주소 만들기
-    downloadUrl = "http://contents.kpu.ac.kr/Download/engine_host=ibook.kpu.ac.kr&bookcode={0}&file_name={1}&file_no=1"\
+    downloadUrl = "http://contents.kpu.ac.kr/Download/engine_host=ibook.kpu.ac.kr&bookcode={0}&file_name={1}&file_no=1" \
         .format(bookCode, parse.quote(fileName))
 
     # 파일 다운 받아서 저장하기
@@ -90,20 +90,21 @@ def lambda_handler(event, context):
                 if signal:
                     signal = False
             else:
-                if temp == "미운영":
+                if not signal:
                     count += 1
-                    continue
-                else:
-                    if not signal:
-                        count += 1
-                        signal = True
+                    signal = True
 
-                    if count == 1:
-                        tempdict["breakFast"].append('- ' + temp)
-                    elif count == 2:
-                        tempdict["lunch"].append('- ' + temp)
-                    elif count == 3:
-                        tempdict["dinner"].append('- ' + temp)
+                if temp == "미운영":
+                    dash = ''
+                else:
+                    dash = '- '
+
+                if count == 1:
+                    tempdict["breakFast"].append(dash + temp)
+                elif count == 2:
+                    tempdict["lunch"].append(dash + temp)
+                elif count == 3:
+                    tempdict["dinner"].append(dash + temp)
 
         tempdict["breakFast"] = '\n'.join(s for s in tempdict["breakFast"])
         tempdict["lunch"] = '\n'.join(s for s in tempdict["lunch"])
