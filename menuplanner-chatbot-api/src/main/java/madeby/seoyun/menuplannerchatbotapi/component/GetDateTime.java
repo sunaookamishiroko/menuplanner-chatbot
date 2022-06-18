@@ -24,9 +24,8 @@ public class GetDateTime {
      * @ return String : "x월 x일" 형태의 문자열
      */
     public static String getDate() {
-        localDateTime = localDateTime.now();
-        String today = localDateTime.getMonth().getValue() + "월 " + localDateTime.getDayOfMonth() + "일";
-        return today;
+        localDateTime = LocalDateTime.now();
+        return localDateTime.getMonth().getValue() + "월 " + localDateTime.getDayOfMonth() + "일";
     }
 
     /**
@@ -36,7 +35,7 @@ public class GetDateTime {
      * @ return String : "월", "화" 등의 형태의 문자열
      */
     public static String getDayOfWeek() {
-        localDateTime = localDateTime.now();
+        localDateTime = LocalDateTime.now();
         DayOfWeek dayOfWeek = localDateTime.getDayOfWeek();
         return dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.KOREAN);
     }
