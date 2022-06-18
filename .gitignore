@@ -1,0 +1,13 @@
+
+.DS_Store
+.idea/menuplanner-chatbot.iml
+.idea/modules.xml
+.idea/runConfigurations.xml
+.idea/vcs.xml
+.idea/workspace.xml
+aws-rambda-python/.DS_Store
+aws-rambda-python/python-library/.DS_Store
+images/.DS_Store
+menuplanner-chatbot-api/.DS_Store
+menuplanner-chatbot-api/src/.DS_Store
+menuplanner-chatbot-api/src/main/.DS_Store
