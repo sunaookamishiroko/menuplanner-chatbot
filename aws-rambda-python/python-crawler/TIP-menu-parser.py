@@ -95,7 +95,10 @@ def lambda_handler(event, context):
                     signal = True
 
                 if temp == "미운영":
-                    dash = ''
+                    if count == 1:
+                        dash = '- '
+                    else:
+                        dash = ''
                 else:
                     dash = '- '
 
