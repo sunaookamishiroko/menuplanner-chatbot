@@ -130,8 +130,15 @@ public class TipMenuService {
             dinner = tipMenu.getDinner();
         }
 
-        String menu = "조식 ▼\n\n" + breakFast + "\n\n중식 ▼\n\n" + lunch + "\n\n석식 ▼\n\n" + dinner;
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder
+                .append("조식 ▼\n\n")
+                .append(breakFast)
+                .append("\n\n중식 ▼\n\n")
+                .append(lunch)
+                .append("\n\n석식 ▼\n\n")
+                .append(dinner);
 
-        return menu;
+        return stringBuilder.toString();
     }
 }

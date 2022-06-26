@@ -111,9 +111,13 @@ public class EblockMenuService {
             lunch = eblockMenu.getLunch();
             dinner = eblockMenu.getDinner();
         }
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder
+                .append("\n\n중식 ▼\n\n")
+                .append(lunch)
+                .append("\n\n석식 ▼\n\n")
+                .append(dinner);
 
-        String menu = "중식 ▼\n\n" + lunch + "\n\n석식 ▼\n\n" + dinner;
-
-        return menu;
+        return stringBuilder.toString();
     }
 }
