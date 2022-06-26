@@ -36,7 +36,7 @@ public class DefaultMessageService {
         JSONObject simpleText = new JSONObject();
         noNamed.put("simpleText", simpleText);
 
-        simpleText.put("text", "지금은 서버가 정보 수집중이에요! 잠시후에 다시 시도해주세요!");
+        simpleText.put("text", "지금은 서버가 파싱중이에요! 잠시후에 다시 시도해주세요.");
 
         return json.toJSONString();
     }
@@ -64,8 +64,7 @@ public class DefaultMessageService {
         JSONObject simpleText = new JSONObject();
         noNamed.put("simpleText", simpleText);
 
-        simpleText.put("text", "아직 금주의 메뉴가 업로드되지 않았습니다! " +
-                "식당으로부터 메뉴가 올라올 때까지 기다려주세요.");
+        simpleText.put("text", "오전 7시부터 파싱이 시작됩니다. 그 후에 찾아주세요!");
 
         return json.toJSONString();
     }
