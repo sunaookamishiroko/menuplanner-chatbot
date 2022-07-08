@@ -31,7 +31,7 @@ public class ParsingMenuData {
     private FileNameRepository fileNameRepository;
     private final RestTemplate restTemplate;
 
-    public static boolean isParsingMenuDataWorking = false;
+    public static boolean isParsingNow = false;
     public static boolean isMondayAndBeforeParsingEblock = false;
     public static boolean isMondayAndBeforeParsingTIP = false;
 
@@ -124,8 +124,8 @@ public class ParsingMenuData {
 
     /**
      * E동 식당의 메뉴 파일 이름, 메뉴 파싱을 해서 새로운 데이터를 DB에 저장한다.
-     * 파싱중일 때는 isParsingMenuDataWorking 시그널을 이용해 정보 수집중 상태로 바꾼다.
-     * 파싱이 끝나면 isParsingMenuDataWorking, isMondayAndBeforeParsingEblock 시그널을
+     * 파싱중일 때는 isParsingNow 시그널을 이용해 정보 수집중 상태로 바꾼다.
+     * 파싱이 끝나면 isParsingNow, isMondayAndBeforeParsingEblock 시그널을
      * false로 바꾼다.
      * api에 관한 자세한 내용은 aws-rambda-python 폴더에 존재하는 소스 코드 참조
      *
@@ -134,7 +134,7 @@ public class ParsingMenuData {
      */
     public void getDataAndSaveToDatabaseEblock() {
         LogData.printLog("E동 파싱 작업 시작...", "getDataAndSaveToDatabaseEblock");
-        isParsingMenuDataWorking = true;
+        isParsingNow = true;
 
         Map<String, String> eBlockFileInfo = getFileInfo("0");
 
@@ -143,20 +143,21 @@ public class ParsingMenuData {
 
         Map<String, Map<String, String>> eBlockMenu =
                 getEblockMenu(eBlockFileName, eBlockBookCode);
+        String[] eBlockMenuKeys = new String[eBlockMenu.keySet().size()];
+        eBlockMenuKeys = eBlockMenu.keySet().toArray(eBlockMenuKeys);
 
-        Object[] eBlockMenuKeys = eBlockMenu.keySet().toArray();
-        saveToEblockDatabase(eBlockMenu, eBlockMenuKeys);
-        saveToEblcokFileNameDatabase(eBlockFileName);
+        saveEblockMenu(eBlockMenu, eBlockMenuKeys);
+        saveEblockFileName(eBlockFileName);
 
-        isParsingMenuDataWorking = false;
+        isParsingNow = false;
         isMondayAndBeforeParsingEblock = false;
         LogData.printLog("파싱 작업 완료", "getDataAndSaveToDatabaseEblock");
     }
 
     /**
      * TIP 식당의 메뉴 파일 이름, 메뉴 파싱을 해서 새로운 데이터를 DB에 저장한다.
-     * 파싱중일 때는 isParsingMenuDataWorking 시그널을 이용해 정보 수집중 상태로 바꾼다.
-     * 파싱이 끝나면 isParsingMenuDataWorking, isMondayAndBeforeParsingTIP 시그널을
+     * 파싱중일 때는 isParsingNow 시그널을 이용해 정보 수집중 상태로 바꾼다.
+     * 파싱이 끝나면 isParsingNow, isMondayAndBeforeParsingTIP 시그널을
      * false로 바꾼다.
      * api에 관한 자세한 내용은 aws-rambda-python 폴더에 존재하는 소스 코드 참조
      *
@@ -165,7 +166,7 @@ public class ParsingMenuData {
      */
     public void getDataAndSaveToDatabaseTip() {
         LogData.printLog("TIP 파싱 작업 시작...", "getDataAndSaveToDatabaseTip");
-        isParsingMenuDataWorking = true;
+        isParsingNow = true;
 
         Map<String, String> tipFileInfo = getFileInfo("1");
 
@@ -174,12 +175,13 @@ public class ParsingMenuData {
 
         Map<String, Map<String, String>> tipMenu =
                 getTipMenu(tipFileName, tipBookCode);
+        String[] tipMenuKeys = new String[tipMenu.keySet().size()];
+        tipMenuKeys = tipMenu.keySet().toArray(tipMenuKeys);
 
-        Object[] tipMenuKeys = tipMenu.keySet().toArray();
-        saveToTipDatabase(tipMenu, tipMenuKeys);
-        saveToTipFileNameDatabase(tipFileName);
+        saveTipMenu(tipMenu, tipMenuKeys);
+        saveTipFileName(tipFileName);
 
-        isParsingMenuDataWorking = false;
+        isParsingNow = false;
         isMondayAndBeforeParsingTIP = false;
         LogData.printLog("파싱 작업 완료", "getDataAndSaveToDatabaseTip");
     }
@@ -250,10 +252,10 @@ public class ParsingMenuData {
         try {
             temp = this.restTemplate.getForObject(url, HashMap.class);
         } catch(Exception e) {
-            throw new ParsingDataFailedException(e.getMessage() + " : " + "getFileName");
+            throw new ParsingDataFailedException(e.getMessage() + " : " + "getFileInfo");
         }
 
-        LogData.printLog("파싱 완료", "getFileName");
+        LogData.printLog("파싱 완료", "getFileInfo");
         return temp;
     }
 
@@ -311,55 +313,55 @@ public class ParsingMenuData {
      * 파싱한 E동 식당 메뉴를 DB에 저장한다.
      *
      * @ param Map<String, Map<String, String>> eBlockMenu : 파싱한 메뉴 json 데이터
-     * @ param Object[] eBlockMenuKeys : json map 데이터의 key가 담긴 데이터
+     * @ param String[] eBlockMenuKeys : json map 데이터의 key가 담긴 데이터
      *                                   메뉴의 날짜(5월 15일...5월 16일..)들이 담겨있음.
      * @ return : 없음
      */
     @Transactional(rollbackFor = Exception.class)
-    public void saveToEblockDatabase(
-            Map<String, Map<String, String>> eBlockMenu, Object[] eBlockMenuKeys) {
-        LogData.printLog("E동 메뉴 DB에 저장중...", "saveToEblockDatabase");
+    public void saveEblockMenu(
+            Map<String, Map<String, String>> eBlockMenu, String[] eBlockMenuKeys) {
+        LogData.printLog("E동 메뉴 DB에 저장중...", "saveEblockMenu");
 
         eblockMenuRepository.deleteAll();
 
-        for(int i = 0; i < eBlockMenuKeys.length; i++) {
-            String tempLunchList = eBlockMenu.get(eBlockMenuKeys[i]).get("lunch");
-            String tempDinnerList = eBlockMenu.get(eBlockMenuKeys[i]).get("dinner");
+        for (String eBlockMenuKey : eBlockMenuKeys) {
+            String tempLunchList = eBlockMenu.get(eBlockMenuKey).get("lunch");
+            String tempDinnerList = eBlockMenu.get(eBlockMenuKey).get("dinner");
 
             eblockMenuRepository.save(
-                    new EblockMenu(eBlockMenuKeys[i].toString(), tempLunchList, tempDinnerList)
+                    new EblockMenu(eBlockMenuKey, tempLunchList, tempDinnerList)
             );
         }
 
-        LogData.printLog("저장 완료", "saveToEblockDatabase");
+        LogData.printLog("저장 완료", "saveEblockMenu");
     }
 
     /**
      * 파싱한 TIP 식당 메뉴를 DB에 저장한다.
      *
      * @ param Map<String, Map<String, String>> eBlockMenu : 파싱한 메뉴 json 데이터
-     * @ param Object[] eBlockMenuKeys : json map 데이터의 key가 담긴 데이터
+     * @ param String[] tipMenuKeys : json map 데이터의 key가 담긴 데이터
      *                                   메뉴의 날짜(5월 15일...5월 16일..)들이 담겨있음.
      * @ return : 없음
      */
     @Transactional(rollbackFor = Exception.class)
-    public void saveToTipDatabase(
-            Map<String, Map<String, String>> tipMenu, Object[] tipMenuKeys) {
-        LogData.printLog("TIP 메뉴 DB에 저장중...", "saveToTipDatabase");
+    public void saveTipMenu(
+            Map<String, Map<String, String>> tipMenu, String[] tipMenuKeys) {
+        LogData.printLog("TIP 메뉴 DB에 저장중...", "saveTipMenu");
 
         tipMenuRepository.deleteAll();
 
-        for(int i = 0; i < tipMenuKeys.length; i++) {
-            String tempbreakFastList = tipMenu.get(tipMenuKeys[i]).get("breakFast");
-            String tempLunchList = tipMenu.get(tipMenuKeys[i]).get("lunch");
-            String tempDinnerList = tipMenu.get(tipMenuKeys[i]).get("dinner");
+        for (String tipMenuKey : tipMenuKeys) {
+            String tempBreakFastList = tipMenu.get(tipMenuKey).get("breakFast");
+            String tempLunchList = tipMenu.get(tipMenuKey).get("lunch");
+            String tempDinnerList = tipMenu.get(tipMenuKey).get("dinner");
 
             tipMenuRepository.save(
-                    new TipMenu(tipMenuKeys[i].toString(), tempbreakFastList, tempLunchList, tempDinnerList)
+                    new TipMenu(tipMenuKey, tempBreakFastList, tempLunchList, tempDinnerList)
             );
         }
 
-        LogData.printLog("저장 완료", "saveToTipDatabase");
+        LogData.printLog("저장 완료", "saveTipMenu");
     }
 
     /**
@@ -369,27 +371,27 @@ public class ParsingMenuData {
      * @ return : 없음
      */
     @Transactional(rollbackFor = Exception.class)
-    public void saveToEblcokFileNameDatabase(String eBlockFileName) {
-        LogData.printLog("E동 파일 이름 DB에 저장중...", "saveToEblcokFileNameDatabase");
+    public void saveEblockFileName(String eBlockFileName) {
+        LogData.printLog("E동 파일 이름 DB에 저장중...", "saveEblockFileName");
 
         fileNameRepository.save(new FileName("0", eBlockFileName));
 
-        LogData.printLog("저장 완료", "saveToFileNameDatabase");
+        LogData.printLog("저장 완료", "saveEblockFileName");
     }
 
     /**
      * 파싱한 TIP 식당 파일 이름을 DB에 저장한다.
      *
-     * @ param String tipBlockFileName : 파싱한 TIP 식당 메뉴 엑셀 파일 이름
+     * @ param String tipFileName : 파싱한 TIP 식당 메뉴 엑셀 파일 이름
      * @ return : 없음
      */
     @Transactional(rollbackFor = Exception.class)
-    public void saveToTipFileNameDatabase(String tipBlockFileName) {
-        LogData.printLog("TIP 파일 이름 DB에 저장중...", "saveToTipFileNameDatabase");
+    public void saveTipFileName(String tipFileName) {
+        LogData.printLog("TIP 파일 이름 DB에 저장중...", "saveTipFileName");
 
-        fileNameRepository.save(new FileName("1", tipBlockFileName));
+        fileNameRepository.save(new FileName("1", tipFileName));
 
-        LogData.printLog("저장 완료", "saveToFileNameDatabase");
+        LogData.printLog("저장 완료", "saveTipFileName");
     }
 
 }
