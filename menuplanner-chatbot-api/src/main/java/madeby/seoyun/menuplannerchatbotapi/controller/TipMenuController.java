@@ -33,9 +33,9 @@ public class TipMenuController {
      * @ param : 없음
      * @ return String : 카카오 챗봇 메시지 형식의 문자열
      */
-    @PostMapping("/get-tip-menu")
+    @PostMapping("/tip")
     public String getTipMenu() {
-        if (ParsingMenuData.isParsingMenuDataWorking)
+        if (ParsingMenuData.isParsingNow)
             return defaultMessageService.makeWorkingNowJson();
         else if (ParsingMenuData.isMondayAndBeforeParsingTIP)
             return defaultMessageService.makeMondayJson();

@@ -34,9 +34,9 @@ public class EblockMenuController {
      * @ param : 없음
      * @ return String : 카카오 챗봇 메시지 형식의 문자열
      */
-    @PostMapping("/get-eblock-menu")
+    @PostMapping("/eblock")
     public String getEblockMenu() {
-        if (ParsingMenuData.isParsingMenuDataWorking)
+        if (ParsingMenuData.isParsingNow)
             return defaultMessageService.makeWorkingNowJson();
         else if (ParsingMenuData.isMondayAndBeforeParsingEblock)
             return defaultMessageService.makeMondayJson();
