@@ -1,0 +1,14 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    password: rootroot
+    url: jdbc:mysql://127.0.0.1:3306/test?useSSL=false&characterEncoding=UTF-8&serverTimezone=Asia/Seoul
+    username: root
+    hikari:
+      connection-timeout: 3500
+
+  jpa:
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    generate-ddl: true
+    show-sql: true
