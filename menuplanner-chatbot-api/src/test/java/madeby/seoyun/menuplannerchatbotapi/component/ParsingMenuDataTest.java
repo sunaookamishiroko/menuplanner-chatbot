@@ -41,7 +41,7 @@ class ParsingMenuDataTest {
         String bookCode = eBlockFileInfo.get("bookCode");
 
         url = ""
-                + fileName + "&bookCode=" + bookCode;
+                + fileName + "&bookcode=" + bookCode;
 
         Map<String, Map<String, String>> eBlockMenu = restTemplate.getForObject(url, Map.class);
         String[] eBlockMenuKeys = new String[eBlockMenu.keySet().size()];
@@ -95,7 +95,7 @@ class ParsingMenuDataTest {
         String bookCode = tipFileInfo.get("bookCode");
 
         url = ""
-                + fileName + "&bookCode=" + bookCode;
+                + fileName + "&bookcode=" + bookCode;
 
         Map<String, Map<String, String>> tipMenu = restTemplate.getForObject(url, Map.class);
         String[] tipMenuKeys = new String[tipMenu.keySet().size()];
