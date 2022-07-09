@@ -7,8 +7,8 @@ from urllib import parse
 def lambda_handler(event, context):
     # 파일 이름 파싱
     try:
-        fileName = event["queryStringParameters"]["fileName"]
-        bookCode = event["queryStringParameters"]["bookCode"]
+        fileName = event["queryStringParameters"]["filename"]
+        bookCode = event["queryStringParameters"]["bookcode"]
     except Exception as e:
         return {
             'statusCode': 404,
