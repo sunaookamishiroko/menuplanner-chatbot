@@ -26,9 +26,9 @@ import java.util.Map;
  */
 @Component
 public class ParsingMenuData {
-    private TipMenuRepository tipMenuRepository;
-    private EblockMenuRepository eblockMenuRepository;
-    private FileNameRepository fileNameRepository;
+    private final TipMenuRepository tipMenuRepository;
+    private final EblockMenuRepository eblockMenuRepository;
+    private final FileNameRepository fileNameRepository;
     private final RestTemplate restTemplate;
 
     public static boolean isParsingNow = false;
@@ -37,11 +37,11 @@ public class ParsingMenuData {
 
     @Autowired
     public ParsingMenuData(TipMenuRepository tipMenuRepository, EblockMenuRepository eblockMenuRepository,
-                           FileNameRepository fileNameRepository, RestTemplateBuilder restTemplateBuilder) {
+                           FileNameRepository fileNameRepository) {
         this.tipMenuRepository = tipMenuRepository;
         this.eblockMenuRepository = eblockMenuRepository;
         this.fileNameRepository = fileNameRepository;
-        this.restTemplate = restTemplateBuilder.build();
+        this.restTemplate = new RestTemplateBuilder().build();
     }
 
     /**
@@ -141,7 +141,7 @@ public class ParsingMenuData {
         String eBlockFileName = eBlockFileInfo.get("fileName");
         String eBlockBookCode = eBlockFileInfo.get("bookCode");
 
-        Map<String, Map<String, String>> eBlockMenu =
+        HashMap<String, HashMap<String, String>> eBlockMenu =
                 getEblockMenu(eBlockFileName, eBlockBookCode);
         String[] eBlockMenuKeys = new String[eBlockMenu.keySet().size()];
         eBlockMenuKeys = eBlockMenu.keySet().toArray(eBlockMenuKeys);
@@ -173,7 +173,7 @@ public class ParsingMenuData {
         String tipFileName = tipFileInfo.get("fileName");
         String tipBookCode = tipFileInfo.get("bookCode");
 
-        Map<String, Map<String, String>> tipMenu =
+        HashMap<String, HashMap<String, String>> tipMenu =
                 getTipMenu(tipFileName, tipBookCode);
         String[] tipMenuKeys = new String[tipMenu.keySet().size()];
         tipMenuKeys = tipMenu.keySet().toArray(tipMenuKeys);
@@ -238,7 +238,7 @@ public class ParsingMenuData {
      * @ return Map<String, String> temp : json 형식의 데이터를 map으로 받아서 반환
      * @ exception ParsingDataFailedException : 파싱에 실패할 경우 발생
      */
-    private Map<String, String> getFileInfo(String num) {
+    private HashMap<String, String> getFileInfo(String num) {
         if(num.equals("0"))
             LogData.printLog("E동 메뉴 파일 이름 파싱중...", "getFileName");
         else if(num.equals("1"))
@@ -247,7 +247,7 @@ public class ParsingMenuData {
         String url = ""
                 + num;
 
-        Map<String, String> temp;
+        HashMap<String, String> temp;
 
         try {
             temp = this.restTemplate.getForObject(url, HashMap.class);
@@ -266,13 +266,14 @@ public class ParsingMenuData {
      * @ param String eBlockBookCode : E동 식당 메뉴 사이트에서 파일 다운받기 위한 bookcode
      * @ return Map<String, Map<String, String>> temp : json 형식의 데이터를 map으로 받아서 반환
      * @ exception ParsingDataFailedException : 파싱에 실패할 경우 발생
+     * @return
      */
-    private Map<String, Map<String, String>> getEblockMenu(String fileName, String eBlockBookCode) {
+    private HashMap<String, HashMap<String, String>> getEblockMenu(String fileName, String eBlockBookCode) {
         LogData.printLog("E동 메뉴 파싱중...", "getEblockMenu");
 
         String url = ""
                 + fileName + "&bookCode=" + eBlockBookCode;
-        Map<String, Map<String, String>> temp;
+        HashMap<String, HashMap<String, String>> temp;
 
         try {
             temp = this.restTemplate.getForObject(url, HashMap.class);
@@ -292,12 +293,12 @@ public class ParsingMenuData {
      * @ return Map<String, Map<String, String>> temp : json 형식의 데이터를 map으로 받아서 반환
      * @ exception ParsingDataFailedException : 파싱에 실패할 경우 발생
      */
-    private Map<String, Map<String, String>> getTipMenu(String fileName, String tipBookCode) {
+    private HashMap<String, HashMap<String, String>> getTipMenu(String fileName, String tipBookCode) {
         LogData.printLog("TIP 메뉴 파싱중...", "getTipMenu");
 
         String url = ""
                 + fileName + "&bookCode=" + tipBookCode;;
-        Map<String, Map<String, String>> temp;
+        HashMap<String, HashMap<String, String>> temp;
 
         try {
             temp = this.restTemplate.getForObject(url, HashMap.class);
@@ -319,7 +320,7 @@ public class ParsingMenuData {
      */
     @Transactional(rollbackFor = Exception.class)
     public void saveEblockMenu(
-            Map<String, Map<String, String>> eBlockMenu, String[] eBlockMenuKeys) {
+            Map<String, HashMap<String, String>> eBlockMenu, String[] eBlockMenuKeys) {
         LogData.printLog("E동 메뉴 DB에 저장중...", "saveEblockMenu");
 
         eblockMenuRepository.deleteAll();
@@ -346,7 +347,7 @@ public class ParsingMenuData {
      */
     @Transactional(rollbackFor = Exception.class)
     public void saveTipMenu(
-            Map<String, Map<String, String>> tipMenu, String[] tipMenuKeys) {
+            Map<String, HashMap<String, String>> tipMenu, String[] tipMenuKeys) {
         LogData.printLog("TIP 메뉴 DB에 저장중...", "saveTipMenu");
 
         tipMenuRepository.deleteAll();
