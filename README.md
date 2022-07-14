@@ -37,7 +37,6 @@
 
 ## Run server
 
-- 배포를 위해서는 aws lambda와 ec2가 필요합니다.
 - 자세한 설명은 디렉토리의 README를 참조해주세요.
 
 - [spring 서버](https://github.com/somewheregreeny/menuplanner-chatbot/tree/main/menuplanner-chatbot-api)
