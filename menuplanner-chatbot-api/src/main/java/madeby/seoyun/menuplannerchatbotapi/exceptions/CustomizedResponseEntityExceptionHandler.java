@@ -30,7 +30,7 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
     public final ResponseEntity<String> handleAllExceptions(Exception ex) {
         LogData.printLog("알 수 없는 에러 발생... " + ex.getMessage(), "handleAllExceptions");
         String msg = "알 수 없는 에러가 발생했습니다. 개발자에게 문의해주세요! code:-1";
-        return new ResponseEntity(makeExceptionJson(msg), HttpStatus.OK);
+        return new ResponseEntity<>(makeExceptionJson(msg), HttpStatus.OK);
     }
 
     /**
@@ -42,7 +42,7 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
     @ExceptionHandler(DatabaseConnectFailedException.class)
     public final ResponseEntity<String> handleDatabaseConnectFailedException(Exception ex) {
         LogData.printLog("DB 연결 실패","handleDatabaseConnectFailedException");
-        return new ResponseEntity(makeExceptionJson(ex.getMessage()), HttpStatus.OK);
+        return new ResponseEntity<>(makeExceptionJson(ex.getMessage()), HttpStatus.OK);
     }
 
     /**
