@@ -70,7 +70,6 @@ public class ParsingMenuData {
      * @ exception : 쓰레드가 오작동하면 exception 발생
      */
     @Scheduled(cron = "0 0 7 * * 1")
-    @Transactional(rollbackFor = Exception.class)
     public void checkUploadMenu() throws Exception{
         LogData.printLog("메뉴 파일 업로드 체크를 시작합니다...", "checkUploadMenu");
         String eBlockFileName = fileNameRepository.findByName("0").getFileName();
@@ -272,7 +271,7 @@ public class ParsingMenuData {
         LogData.printLog("E동 메뉴 파싱중...", "getEblockMenu");
 
         String url = ""
-                + fileName + "&bookCode=" + eBlockBookCode;
+                + fileName + "&bookcode=" + eBlockBookCode;
         HashMap<String, HashMap<String, String>> temp;
 
         try {
@@ -297,7 +296,7 @@ public class ParsingMenuData {
         LogData.printLog("TIP 메뉴 파싱중...", "getTipMenu");
 
         String url = ""
-                + fileName + "&bookCode=" + tipBookCode;;
+                + fileName + "&bookcode=" + tipBookCode;;
         HashMap<String, HashMap<String, String>> temp;
 
         try {
