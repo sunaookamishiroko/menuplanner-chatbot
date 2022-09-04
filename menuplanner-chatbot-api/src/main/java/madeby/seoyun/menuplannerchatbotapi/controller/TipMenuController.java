@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class TipMenuController {
 
-    private TipMenuService tipMenuService;
-    private DefaultMessageService defaultMessageService;
+    private final TipMenuService tipMenuService;
+    private final DefaultMessageService defaultMessageService;
 
     @Autowired
     public TipMenuController(TipMenuService tipMenuService, DefaultMessageService defaultMessageService) {

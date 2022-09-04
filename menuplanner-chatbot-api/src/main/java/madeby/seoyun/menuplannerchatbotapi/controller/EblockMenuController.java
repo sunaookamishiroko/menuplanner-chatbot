@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class EblockMenuController {
 
-    private EblockMenuService eblockMenuService;
-    private DefaultMessageService defaultMessageService;
+    private final EblockMenuService eblockMenuService;
+    private final DefaultMessageService defaultMessageService;
 
     @Autowired
     public EblockMenuController(EblockMenuService eblockMenuService, DefaultMessageService defaultMessageService) {
