@@ -37,9 +37,9 @@ public class EblockMenuController {
     @PostMapping("/eblock")
     public String getEblockMenu() {
         if (ParsingMenuData.isParsingNow)
-            return defaultMessageService.makeWorkingNowJson();
+            return defaultMessageService.makeJson("지금은 서버가 파싱중이에요! 잠시후에 다시 시도해주세요.");
         else if (ParsingMenuData.isMondayAndBeforeParsingEblock)
-            return defaultMessageService.makeMondayJson();
+            return defaultMessageService.makeJson("오전 7시부터 파싱이 시작됩니다. 그 후에 찾아주세요!");
         else
             return eblockMenuService.makeMenuJson();
     }
