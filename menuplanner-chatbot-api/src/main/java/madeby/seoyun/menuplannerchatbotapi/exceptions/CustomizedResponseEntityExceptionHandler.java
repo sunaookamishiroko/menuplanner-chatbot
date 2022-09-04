@@ -1,8 +1,10 @@
 package madeby.seoyun.menuplannerchatbotapi.exceptions;
 
 import madeby.seoyun.menuplannerchatbotapi.component.LogData;
+import madeby.seoyun.menuplannerchatbotapi.service.DefaultMessageService;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -19,6 +21,12 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @RestController
 @ControllerAdvice
 public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
+    public final DefaultMessageService defaultMessageService;
+
+    @Autowired
+    public CustomizedResponseEntityExceptionHandler(DefaultMessageService defaultMessageService) {
+        this.defaultMessageService = defaultMessageService;
+    }
 
     /**
      * default exception handler
@@ -29,8 +37,9 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
     @ExceptionHandler(Exception.class)
     public final ResponseEntity<String> handleAllExceptions(Exception ex) {
         LogData.printLog("알 수 없는 에러 발생... " + ex.getMessage(), "handleAllExceptions");
-        String msg = "알 수 없는 에러가 발생했습니다. 개발자에게 문의해주세요! code:-1";
-        return new ResponseEntity<>(makeExceptionJson(msg), HttpStatus.OK);
+        return new ResponseEntity<>(
+                defaultMessageService.makeJson("알 수 없는 에러가 발생했습니다. 개발자에게 문의해주세요! code:-1"),
+                HttpStatus.OK);
     }
 
     /**
@@ -41,35 +50,8 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
      */
     @ExceptionHandler(DatabaseConnectFailedException.class)
     public final ResponseEntity<String> handleDatabaseConnectFailedException(Exception ex) {
-        LogData.printLog("DB 연결 실패","handleDatabaseConnectFailedException");
-        return new ResponseEntity<>(makeExceptionJson(ex.getMessage()), HttpStatus.OK);
-    }
-
-    /**
-     * 메시지로 보낼 문자열을 받아 카카오 챗봇 메시지 형식 json 문자열을 만든다.
-     *
-     * @ param String msg : 메시지로 보낼 문자열
-     * @ return String : 카카오 챗봇 메시지 형식 json 문자열
-     */
-    private String makeExceptionJson(String msg) {
-        JSONObject json = new JSONObject();
-        json.put("version", "2.0");
-
-        JSONObject template = new JSONObject();
-        json.put("template", template);
-
-        JSONArray outputs = new JSONArray();
-        template.put("outputs", outputs);
-
-        JSONObject noNamed = new JSONObject();
-        outputs.add(noNamed);
-
-        JSONObject simpleText = new JSONObject();
-        noNamed.put("simpleText", simpleText);
-
-        simpleText.put("text", msg);
-
-        return json.toJSONString();
+        LogData.printLog("DB 연결 실패", "handleDatabaseConnectFailedException");
+        return new ResponseEntity<>(defaultMessageService.makeJson(ex.getMessage()), HttpStatus.OK);
     }
 
 }
