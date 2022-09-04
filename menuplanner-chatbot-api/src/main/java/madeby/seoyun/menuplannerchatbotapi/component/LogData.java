@@ -14,8 +14,6 @@ import java.time.format.DateTimeFormatter;
 @Component
 public class LogData {
 
-    public LogData() {}
-
     /**
      * 메시지와 메서드 이름을 받아서 날짜 시간과 함께 출력한다.
      *
