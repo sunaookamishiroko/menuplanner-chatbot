@@ -62,24 +62,24 @@ public class TipMenuService {
 
         JSONObject lunchTime = new JSONObject();
         lunchTime.put("title", "중식 시간");
-        //lunchTime.put("description", "11:30 - 14:30");
-        lunchTime.put("description", "11:30 - 14:00");
+        lunchTime.put("description", "11:30 - 14:30");
+        //lunchTime.put("description", "11:30 - 14:00");
 
         JSONObject dinnerTime = new JSONObject();
-        dinnerTime.put("title", "석식 시간");
+        dinnerTime.put("title", "석식 시간(주중, 주말)");
         //주중
-        //dinnerTime.put("description", "16:50 - 18:50");
+        dinnerTime.put("description", "17:50 - 18:50");
         //주말
-        //dinnerTime.put("description", "17:00 - 18:00");
-        dinnerTime.put("description", "17:30 - 18:30");
+        dinnerTime.put("description", "17:00 - 18:00");
+        //dinnerTime.put("description", "17:30 - 18:30");
 
         JSONObject breakFastPrice = new JSONObject();
-        breakFastPrice.put("title", "라면/조식 가격");
-        breakFastPrice.put("description", "3000원/4000원");
+        breakFastPrice.put("title", "셀프라면 가격");
+        breakFastPrice.put("description", "3000원");
 
         JSONObject lunchDinnerPrice = new JSONObject();
         lunchDinnerPrice.put("title", "중식/석식 가격");
-        lunchDinnerPrice.put("description", "5000원");
+        lunchDinnerPrice.put("description", "6000원");
 
         itemList.add(breakFastTime);
         itemList.add(lunchTime);

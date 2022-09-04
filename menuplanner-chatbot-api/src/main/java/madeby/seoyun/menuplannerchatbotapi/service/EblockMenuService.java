@@ -65,7 +65,7 @@ public class EblockMenuService {
 
         JSONObject price = new JSONObject();
         price.put("title", "가격");
-        price.put("description", "5500원");
+        price.put("description", "6500원");
 
         itemList.add(lunchTime);
         itemList.add(dinnerTime);
