@@ -66,8 +66,8 @@ public class TipMenuService {
         //lunchTime.put("description", "11:30 - 14:00");
 
         JSONObject dinnerTime = new JSONObject();
-        dinnerTime.put("title", "석식 시간 주중(주말)");
-        dinnerTime.put("description", "17:00(17:00) - 18:50(18:00)");
+        dinnerTime.put("title", "석식 시간(주말)");
+        dinnerTime.put("description", "17:00 - 18:50(18:00)");
         //dinnerTime.put("description", "17:30 - 18:30");
 
         JSONObject breakFastPrice = new JSONObject();
