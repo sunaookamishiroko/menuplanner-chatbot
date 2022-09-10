@@ -8,6 +8,7 @@ import madeby.seoyun.menuplannerchatbotapi.repository.EblockMenuRepository;
 import madeby.seoyun.menuplannerchatbotapi.repository.FileNameRepository;
 import madeby.seoyun.menuplannerchatbotapi.repository.TipMenuRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -34,6 +35,9 @@ public class ParsingMenuData {
     public static boolean isParsingNow = false;
     public static boolean isMondayAndBeforeParsingEblock = false;
     public static boolean isMondayAndBeforeParsingTIP = false;
+
+    @Value("${parsing-endpoint}")
+    private String endPoint;
 
     @Autowired
     public ParsingMenuData(TipMenuRepository tipMenuRepository, EblockMenuRepository eblockMenuRepository,
@@ -243,8 +247,7 @@ public class ParsingMenuData {
         else if(num.equals("1"))
             LogData.printLog("TIP 메뉴 파일 이름 파싱중...", "getFileName");
 
-        String url = ""
-                + num;
+        String url = endPoint + "/fileinfo?classify=" + num;
 
         HashMap<String, String> temp;
 
@@ -270,8 +273,7 @@ public class ParsingMenuData {
     private HashMap<String, HashMap<String, String>> getEblockMenu(String fileName, String eBlockBookCode) {
         LogData.printLog("E동 메뉴 파싱중...", "getEblockMenu");
 
-        String url = ""
-                + fileName + "&bookcode=" + eBlockBookCode;
+        String url = endPoint + "eblock?filename=" + fileName + "&bookcode=" + eBlockBookCode;
         HashMap<String, HashMap<String, String>> temp;
 
         try {
@@ -295,8 +297,7 @@ public class ParsingMenuData {
     private HashMap<String, HashMap<String, String>> getTipMenu(String fileName, String tipBookCode) {
         LogData.printLog("TIP 메뉴 파싱중...", "getTipMenu");
 
-        String url = ""
-                + fileName + "&bookcode=" + tipBookCode;;
+        String url = endPoint + "tip?filename=" + fileName + "&bookcode=" + tipBookCode;
         HashMap<String, HashMap<String, String>> temp;
 
         try {

@@ -4,6 +4,7 @@ import madeby.seoyun.menuplannerchatbotapi.component.ParsingMenuData;
 import madeby.seoyun.menuplannerchatbotapi.service.DefaultMessageService;
 import madeby.seoyun.menuplannerchatbotapi.service.TipMenuService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,6 +19,12 @@ public class TipMenuController {
 
     private final TipMenuService tipMenuService;
     private final DefaultMessageService defaultMessageService;
+
+    @Value("${parsing-message}")
+    private String parsingMessage;
+
+    @Value("${monday-message}")
+    private String mondayMessage;
 
     @Autowired
     public TipMenuController(TipMenuService tipMenuService, DefaultMessageService defaultMessageService) {
@@ -36,9 +43,9 @@ public class TipMenuController {
     @PostMapping("/tip")
     public String getTipMenu() {
         if (ParsingMenuData.isParsingNow)
-            return defaultMessageService.makeJson("지금은 서버가 파싱중이에요! 잠시후에 다시 시도해주세요.");
+            return defaultMessageService.makeJson(parsingMessage);
         else if (ParsingMenuData.isMondayAndBeforeParsingTIP)
-            return defaultMessageService.makeJson("오전 7시부터 파싱이 시작됩니다. 그 후에 찾아주세요!");
+            return defaultMessageService.makeJson(mondayMessage);
         else
             return tipMenuService.makeMenuJson();
     }
