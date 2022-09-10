@@ -13,11 +13,11 @@ import org.springframework.stereotype.Component;
  * @Author : lsy
  */
 @Component
-public class CheckDatabaseApplicationRunner implements ApplicationRunner {
+public class CheckApplicationRunner implements ApplicationRunner {
     private ParsingMenuData parsingMenuData;
 
     @Autowired
-    public CheckDatabaseApplicationRunner(ParsingMenuData parsingMenuData) {
+    public CheckApplicationRunner(ParsingMenuData parsingMenuData) {
         this.parsingMenuData = parsingMenuData;
     }
 
