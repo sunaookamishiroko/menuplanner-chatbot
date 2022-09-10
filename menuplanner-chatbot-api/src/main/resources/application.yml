@@ -6,8 +6,15 @@ spring:
     username: root
     hikari:
       connection-timeout: 3500
+
   jpa:
     database: mysql
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
     generate-ddl: true
     show-sql: true
+
+
+parsing-endpoint:
+
+parsing-message: 지금은 서버가 파싱중이에요! 잠시후에 다시 시도해주세요.
+monday-message: 오전 7시부터 파싱이 시작됩니다. 그 후에 찾아주세요!

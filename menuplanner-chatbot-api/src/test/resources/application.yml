@@ -12,3 +12,6 @@ spring:
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
     generate-ddl: true
     show-sql: true
+
+
+parsing-endpoint: 
