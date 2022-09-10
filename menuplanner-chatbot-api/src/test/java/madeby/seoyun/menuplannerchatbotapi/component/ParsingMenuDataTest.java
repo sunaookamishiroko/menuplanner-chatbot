@@ -8,6 +8,7 @@ import madeby.seoyun.menuplannerchatbotapi.repository.FileNameRepository;
 import madeby.seoyun.menuplannerchatbotapi.repository.TipMenuRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -30,18 +31,20 @@ class ParsingMenuDataTest {
     private FileNameRepository fileNameRepository;
     private RestTemplate restTemplate = new RestTemplateBuilder().build();
 
+    @Value("${parsing-endpoint}")
+    private String endPoint;
+
     @Test
     void testGetDataAndSaveToDatabaseEblock() {
 
         // before
-        String url = "";
+        String url = endPoint + "/fileinfo?classify=0";
         Map<String, String> eBlockFileInfo = restTemplate.getForObject(url, Map.class);
 
         String fileName = eBlockFileInfo.get("fileName");
         String bookCode = eBlockFileInfo.get("bookCode");
 
-        url = ""
-                + fileName + "&bookcode=" + bookCode;
+        url = endPoint + "/eblock?filename=" + fileName + "&bookcode=" + bookCode;
 
         Map<String, Map<String, String>> eBlockMenu = restTemplate.getForObject(url, Map.class);
         String[] eBlockMenuKeys = new String[eBlockMenu.keySet().size()];
@@ -88,14 +91,13 @@ class ParsingMenuDataTest {
     void getDataAndSaveToDatabaseTip() {
 
         // before
-        String url = "";
+        String url = endPoint + "/fileinfo?classify=1";
         Map<String, String> tipFileInfo = restTemplate.getForObject(url, Map.class);
 
         String fileName = tipFileInfo.get("fileName");
         String bookCode = tipFileInfo.get("bookCode");
 
-        url = ""
-                + fileName + "&bookcode=" + bookCode;
+        url = endPoint + "/tip?filename=" + fileName + "&bookcode=" + bookCode;
 
         Map<String, Map<String, String>> tipMenu = restTemplate.getForObject(url, Map.class);
         String[] tipMenuKeys = new String[tipMenu.keySet().size()];
