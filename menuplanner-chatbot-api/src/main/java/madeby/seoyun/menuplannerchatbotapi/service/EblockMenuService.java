@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 public class EblockMenuService {
-    private EblockMenuRepository repository;
+    private final EblockMenuRepository repository;
 
     @Autowired
     public EblockMenuService(EblockMenuRepository repository) {

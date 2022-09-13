@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 public class TipMenuService {
-    private TipMenuRepository repository;
+    private final TipMenuRepository repository;
 
     @Autowired
     public TipMenuService(TipMenuRepository repository) {
