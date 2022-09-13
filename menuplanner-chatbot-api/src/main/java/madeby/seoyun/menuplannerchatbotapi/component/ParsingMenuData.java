@@ -276,7 +276,7 @@ public class ParsingMenuData {
     private HashMap<String, HashMap<String, String>> getEblockMenu(String fileName, String eBlockBookCode) {
         LogData.printLog("E동 메뉴 파싱중...", "getEblockMenu");
 
-        String url = endPoint + "eblock?filename=" + fileName + "&bookcode=" + eBlockBookCode;
+        String url = endPoint + "/eblock?filename=" + fileName + "&bookcode=" + eBlockBookCode;
         HashMap<String, HashMap<String, String>> temp;
 
         try {
@@ -300,7 +300,7 @@ public class ParsingMenuData {
     private HashMap<String, HashMap<String, String>> getTipMenu(String fileName, String tipBookCode) {
         LogData.printLog("TIP 메뉴 파싱중...", "getTipMenu");
 
-        String url = endPoint + "tip?filename=" + fileName + "&bookcode=" + tipBookCode;
+        String url = endPoint + "/tip?filename=" + fileName + "&bookcode=" + tipBookCode;
         HashMap<String, HashMap<String, String>> temp;
 
         try {
