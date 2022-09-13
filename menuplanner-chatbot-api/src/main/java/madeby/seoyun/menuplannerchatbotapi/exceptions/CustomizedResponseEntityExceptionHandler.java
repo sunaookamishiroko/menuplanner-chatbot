@@ -2,8 +2,6 @@ package madeby.seoyun.menuplannerchatbotapi.exceptions;
 
 import madeby.seoyun.menuplannerchatbotapi.component.LogData;
 import madeby.seoyun.menuplannerchatbotapi.service.DefaultMessageService;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
