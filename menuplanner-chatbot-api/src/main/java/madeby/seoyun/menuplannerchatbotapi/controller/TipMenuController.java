@@ -19,6 +19,7 @@ public class TipMenuController {
 
     private final TipMenuService tipMenuService;
     private final DefaultMessageService defaultMessageService;
+    private final ParsingMenuData parsingMenuData;
 
     @Value("${parsing-message}")
     private String parsingMessage;
@@ -27,9 +28,11 @@ public class TipMenuController {
     private String mondayMessage;
 
     @Autowired
-    public TipMenuController(TipMenuService tipMenuService, DefaultMessageService defaultMessageService) {
+    public TipMenuController(TipMenuService tipMenuService, DefaultMessageService defaultMessageService,
+                             ParsingMenuData parsingMenuData) {
         this.tipMenuService = tipMenuService;
         this.defaultMessageService = defaultMessageService;
+        this.parsingMenuData = parsingMenuData;
     }
 
     /**
@@ -42,9 +45,9 @@ public class TipMenuController {
      */
     @PostMapping("/tip")
     public String getTipMenu() {
-        if (ParsingMenuData.isParsingNow)
+        if (parsingMenuData.checkParsingNow())
             return defaultMessageService.makeJson(parsingMessage);
-        else if (ParsingMenuData.isMondayAndBeforeParsingTIP)
+        else if (parsingMenuData.checkBeforeParsingTIP())
             return defaultMessageService.makeJson(mondayMessage);
         else
             return tipMenuService.makeMenuJson();

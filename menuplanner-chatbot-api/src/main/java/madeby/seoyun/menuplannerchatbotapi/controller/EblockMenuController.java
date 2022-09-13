@@ -19,6 +19,7 @@ public class EblockMenuController {
 
     private final EblockMenuService eblockMenuService;
     private final DefaultMessageService defaultMessageService;
+    private final ParsingMenuData parsingMenuData;
 
     @Value("${parsing-message}")
     private String parsingMessage;
@@ -27,9 +28,11 @@ public class EblockMenuController {
     private String mondayMessage;
 
     @Autowired
-    public EblockMenuController(EblockMenuService eblockMenuService, DefaultMessageService defaultMessageService) {
+    public EblockMenuController(EblockMenuService eblockMenuService, DefaultMessageService defaultMessageService,
+                                ParsingMenuData parsingMenuData) {
         this.eblockMenuService = eblockMenuService;
         this.defaultMessageService = defaultMessageService;
+        this.parsingMenuData = parsingMenuData;
     }
 
 
@@ -43,9 +46,9 @@ public class EblockMenuController {
      */
     @PostMapping("/eblock")
     public String getEblockMenu() {
-        if (ParsingMenuData.isParsingNow)
+        if (parsingMenuData.checkParsingNow())
             return defaultMessageService.makeJson(parsingMessage);
-        else if (ParsingMenuData.isMondayAndBeforeParsingEblock)
+        else if (parsingMenuData.checkBeforeParsingEblock())
             return defaultMessageService.makeJson(mondayMessage);
         else
             return eblockMenuService.makeMenuJson();

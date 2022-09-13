@@ -32,9 +32,9 @@ public class ParsingMenuData {
     private final FileNameRepository fileNameRepository;
     private final RestTemplate restTemplate;
 
-    public static boolean isParsingNow = false;
-    public static boolean isMondayAndBeforeParsingEblock = false;
-    public static boolean isMondayAndBeforeParsingTIP = false;
+    private boolean isParsingNow = false;
+    private boolean isBeforeParsingEblock = false;
+    private boolean isBeforeParsingTIP = false;
 
     @Value("${parsing-endpoint}")
     private String endPoint;
@@ -49,7 +49,7 @@ public class ParsingMenuData {
     }
 
     /**
-     * 월요일 0시 0분 0초가 되면, isMondayAndBeforeParsing 시그널을 true로 바꾼다.
+     * 월요일 0시 0분 0초가 되면, isBeforeParsingEblock, isBeforeParsingTIP 시그널을 true로 바꾼다.
      * 이 시그널은 컨트롤러가 식당으로부터 메뉴가 올라올 때까지 기다려달라는 json을 보내게 한다.
      *
      * @ param : 없음
@@ -58,15 +58,14 @@ public class ParsingMenuData {
     @Scheduled(cron = "0 0 0 * * 1")
     public void setMondaySignalTrue() {
         LogData.printLog("monday = true", "setMondaySignalTrue");
-        isMondayAndBeforeParsingEblock = true;
-        isMondayAndBeforeParsingTIP = true;
+        isBeforeParsingEblock = true;
+        isBeforeParsingTIP = true;
     }
 
     /**
      * 월요일 7시 0분 0초가 되면 메뉴가 올라왔는지 체크하기 시작한다.
      * 체크는 DB의 파일 이름과 파싱해서 얻은 파일을 10분마다 비교한다.
      * 만약 파일 이름이 같지 않다면 새 메뉴가 올라온 것으로
-     * isMondayAndBeforeParsing 시그널을 false로 바꾸고,
      * getDataAndSaveToDatabase() 메서드를 실행한다.
      *
      * @ param : 없음
@@ -84,6 +83,8 @@ public class ParsingMenuData {
 
         String newEblockFileName;
         String newTipFileName;
+
+        isParsingNow = true;
 
         while(true) {
             if (!isEblockUploaded) {
@@ -109,6 +110,8 @@ public class ParsingMenuData {
             if (isEblockUploaded && isTipUploaded) break;
             else Thread.sleep(600000);
         }
+        isParsingNow = false;
+
         LogData.printLog("메뉴 파일 업로드 체크 완료", "checkUploadMenu");
     }
 
@@ -128,7 +131,7 @@ public class ParsingMenuData {
     /**
      * E동 식당의 메뉴 파일 이름, 메뉴 파싱을 해서 새로운 데이터를 DB에 저장한다.
      * 파싱중일 때는 isParsingNow 시그널을 이용해 정보 수집중 상태로 바꾼다.
-     * 파싱이 끝나면 isParsingNow, isMondayAndBeforeParsingEblock 시그널을
+     * 파싱이 끝나면 isParsingNow, isBeforeParsingEblock 시그널을
      * false로 바꾼다.
      * api에 관한 자세한 내용은 aws-rambda-python 폴더에 존재하는 소스 코드 참조
      *
@@ -153,14 +156,14 @@ public class ParsingMenuData {
         saveEblockFileName(eBlockFileName);
 
         isParsingNow = false;
-        isMondayAndBeforeParsingEblock = false;
+        isBeforeParsingEblock = false;
         LogData.printLog("파싱 작업 완료", "getDataAndSaveToDatabaseEblock");
     }
 
     /**
      * TIP 식당의 메뉴 파일 이름, 메뉴 파싱을 해서 새로운 데이터를 DB에 저장한다.
      * 파싱중일 때는 isParsingNow 시그널을 이용해 정보 수집중 상태로 바꾼다.
-     * 파싱이 끝나면 isParsingNow, isMondayAndBeforeParsingTIP 시그널을
+     * 파싱이 끝나면 isParsingNow, isBeforeParsingTIP 시그널을
      * false로 바꾼다.
      * api에 관한 자세한 내용은 aws-rambda-python 폴더에 존재하는 소스 코드 참조
      *
@@ -185,7 +188,7 @@ public class ParsingMenuData {
         saveTipFileName(tipFileName);
 
         isParsingNow = false;
-        isMondayAndBeforeParsingTIP = false;
+        isBeforeParsingTIP = false;
         LogData.printLog("파싱 작업 완료", "getDataAndSaveToDatabaseTip");
     }
 
@@ -393,6 +396,36 @@ public class ParsingMenuData {
         fileNameRepository.save(new FileName("1", tipFileName));
 
         LogData.printLog("저장 완료", "saveTipFileName");
+    }
+
+    /**
+     * E동 메뉴가 파싱 전인지 아닌지 알려준다.
+     *
+     * @ param : 없음
+     * @ return : boolean : 파싱 완료 전이면 true, 완료 후면 falae
+     */
+    public boolean checkBeforeParsingEblock() {
+        return isBeforeParsingEblock;
+    }
+
+    /**
+     * TIP 메뉴가 파싱 전인지 아닌지 알려준다.
+     *
+     * @ param : 없음
+     * @ return : boolean : 파싱 완료 전이면 true, 완료 후면 falae
+     */
+    public boolean checkBeforeParsingTIP() {
+        return isBeforeParsingTIP;
+    }
+
+    /**
+     * 월요일 오전 7시부터 시작되는 파싱이 완료됐는지 알려준다.
+     *
+     * @ param : 없음
+     * @ return : boolean : 파싱 완료 전이면 true, 완료 후면 falae
+     */
+    public boolean checkParsingNow() {
+        return isParsingNow;
     }
 
 }
