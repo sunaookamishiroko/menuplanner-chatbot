@@ -4,6 +4,7 @@ import madeby.seoyun.menuplannerchatbotapi.repository.EblockMenuRepository;
 import madeby.seoyun.menuplannerchatbotapi.repository.FileNameRepository;
 import madeby.seoyun.menuplannerchatbotapi.repository.TipMenuRepository;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
@@ -12,11 +13,11 @@ import org.springframework.boot.test.mock.mockito.SpyBean;
 @DataJpaTest
 class ParsingMenuDataTest {
 
-    @SpyBean
+    @Autowired
     private TipMenuRepository tipMenuRepository;
-    @SpyBean
+    @Autowired
     private EblockMenuRepository eblockMenuRepository;
-    @SpyBean
+    @Autowired
     private FileNameRepository fileNameRepository;
     @SpyBean
     private ParsingMenuData parsingMenuData;
@@ -24,7 +25,7 @@ class ParsingMenuDataTest {
     @Test
     void testGetDataAndSaveToDatabaseEblock() {
         parsingMenuData.getDataAndSaveToDatabaseEblock();
-        String[] arr = {"9월 12일", "9월 13일", "9월 14일", "9월 15일", "9월 16일"};
+        String[] arr = {"10월 17일", "10월 18일", "10월 19일", "10월 20일", "10월 21일"};
         System.out.println("파일 이름 : " + fileNameRepository.findByName("0").getFileName());
         for (String date : arr) {
             System.out.println("날짜 : " + date);
