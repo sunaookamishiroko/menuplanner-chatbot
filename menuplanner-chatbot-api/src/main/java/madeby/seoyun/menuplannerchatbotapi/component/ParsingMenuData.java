@@ -134,9 +134,7 @@ public class ParsingMenuData {
 
     /**
      * E동 식당의 메뉴 파일 이름, 메뉴 파싱을 해서 새로운 데이터를 DB에 저장한다.
-     * 파싱중일 때는 isParsingNow 시그널을 이용해 정보 수집중 상태로 바꾼다.
-     * 파싱이 끝나면 isParsingNow, isBeforeParsingEblock 시그널을
-     * false로 바꾼다.
+     * 파싱이 끝나면 isParsingNowEblock 시그널을 false로 바꾼다.
      * api에 관한 자세한 내용은 aws-rambda-python 폴더에 존재하는 소스 코드 참조
      *
      * @ param : 없음
@@ -164,9 +162,7 @@ public class ParsingMenuData {
 
     /**
      * TIP 식당의 메뉴 파일 이름, 메뉴 파싱을 해서 새로운 데이터를 DB에 저장한다.
-     * 파싱중일 때는 isParsingNow 시그널을 이용해 정보 수집중 상태로 바꾼다.
-     * 파싱이 끝나면 isParsingNow, isBeforeParsingTIP 시그널을
-     * false로 바꾼다.
+     * 파싱이 끝나면 isParsingNowTIP 시그널을 false로 바꾼다.
      * api에 관한 자세한 내용은 aws-rambda-python 폴더에 존재하는 소스 코드 참조
      *
      * @ param : 없음
