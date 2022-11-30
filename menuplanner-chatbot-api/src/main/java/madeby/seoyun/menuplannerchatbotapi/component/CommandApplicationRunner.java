@@ -36,25 +36,11 @@ public class CommandApplicationRunner implements ApplicationRunner {
      */
     @Override
     public void run(ApplicationArguments args) throws Exception{
-        // parse option
-        List<String> parseList = args.getOptionValues("p");
+
         // vacation option
         List<String> vacationList = args.getOptionValues("v");
-
-        // parse 명령어 체크
-        if (parseList == null) {
-            parseList = new ArrayList<>();
-            // 기본 -> 파싱 모드
-            parseList.add("true");
-        }
-
-        if (parseList.size() > 1) {
-            throw new WrongCommandException("잘못된 명령어입니다. 하나만 입력해주세요. --p=" + parseList);
-        }
-
-        if (!parseList.get(0).equals("true") && !parseList.get(0).equals("false")) {
-            throw new WrongCommandException("잘못된 명령어입니다. true나 false로 입력해주세요. --p=" + parseList.get(0));
-        }
+        // parse option
+        List<String> parseList = args.getOptionValues("p");
 
         // vacation 명령어 체크
         if (vacationList == null) {
@@ -71,15 +57,19 @@ public class CommandApplicationRunner implements ApplicationRunner {
             throw new WrongCommandException("잘못된 명령어입니다. true나 false로 입력해주세요. --v=" + vacationList.get(0));
         }
 
-        // parse option
-        switch (parseList.get(0)) {
-            case "true":
-                LogData.printLog("파싱을 진행합니다...", "run");
-                parse();
-                break;
-            case "false":
-                LogData.printLog("파싱을 진행하지 않습니다...", "run");
-                break;
+        // parse 명령어 체크
+        if (parseList == null) {
+            parseList = new ArrayList<>();
+            // 기본 -> 파싱 모드
+            parseList.add("true");
+        }
+
+        if (parseList.size() > 1) {
+            throw new WrongCommandException("잘못된 명령어입니다. 하나만 입력해주세요. --p=" + parseList);
+        }
+
+        if (!parseList.get(0).equals("true") && !parseList.get(0).equals("false")) {
+            throw new WrongCommandException("잘못된 명령어입니다. true나 false로 입력해주세요. --p=" + parseList.get(0));
         }
 
         // vacation option
@@ -90,6 +80,17 @@ public class CommandApplicationRunner implements ApplicationRunner {
                 break;
             case "false":
                 LogData.printLog("학기 모드로 설정했습니다...", "run");
+                break;
+        }
+
+        // parse option
+        switch (parseList.get(0)) {
+            case "true":
+                LogData.printLog("파싱을 진행합니다...", "run");
+                parse();
+                break;
+            case "false":
+                LogData.printLog("파싱을 진행하지 않습니다...", "run");
                 break;
         }
 
