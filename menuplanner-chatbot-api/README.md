@@ -6,7 +6,7 @@ spring boot로 만든 REST api 서버입니다.
 
 ## Project structure
 
-<img height=700 src="/images/menuplanner-chatbot-api-structure.png">
+<img height=900 src="/images/menuplanner-chatbot-api-structure.png">
 
 ## How it works?
 
