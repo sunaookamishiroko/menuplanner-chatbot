@@ -5,20 +5,21 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 /**
- * Spring project가 시작될 때 시작되는 서비스로 데이터가 존재하거나 최신 데이터인지 알아내어
- * DB에 데이터를 저장하거나 저장하지 않는 역할을 수행하는 컴포넌트
+ * 서버가 시작될 때 명령어를 받아 수행하는 컴포넌트
  *
  * @filename : CheckDatabaseApplicationRunner.java
  * @Author : lsy
  */
 @Component
 public class CheckApplicationRunner implements ApplicationRunner {
-    private ParsingMenuData parsingMenuData;
+    private ParsingMenu parsingMenu;
 
     @Autowired
-    public CheckApplicationRunner(ParsingMenuData parsingMenuData) {
-        this.parsingMenuData = parsingMenuData;
+    public CheckApplicationRunner(ParsingMenu parsingMenu) {
+        this.parsingMenu = parsingMenu;
     }
 
     /**
@@ -29,8 +30,70 @@ public class CheckApplicationRunner implements ApplicationRunner {
      * @ return : 없음
      */
     @Override
-    public void run(ApplicationArguments args) {
-        if (!parsingMenuData.isDatabaseDataExist() || !parsingMenuData.isRecentData())
-            parsingMenuData.getDataAndSaveToDatabase();
+    public void run(ApplicationArguments args) throws Exception{
+        List<String> parseList = args.getOptionValues("parse");
+        List<String> vacationList = args.getOptionValues("vacation");
+
+        // 명령어 갯수에 따라 설정
+        switch (parseList.size()) {
+            case 0:
+                parseList.add("true");
+                break;
+            case 1:
+                break;
+            default:
+                LogData.printLog("잘못된 명령어입니다. 하나만 입력해주세요. --parse=" + parseList, "run");
+                throw new Exception();
+        }
+
+        switch (vacationList.size()) {
+            case 0:
+                vacationList.add("true");
+                break;
+            case 1:
+                break;
+            default:
+                LogData.printLog("잘못된 명령어입니다. 하나만 입력해주세요. --vacation=" + vacationList, "run");
+                throw new Exception();
+        }
+
+        // parse option
+        switch (parseList.get(0)) {
+            case "true":
+                LogData.printLog("파싱을 진행합니다...", "run");
+                parse();
+                break;
+            case "false":
+                LogData.printLog("파싱을 진행하지 않습니다...", "run");
+                break;
+            default:
+                LogData.printLog("잘못된 명령어입니다. true나 false로 입력해주세요. --parse=" + parseList.get(0), "run");
+                throw new Exception();
+        }
+
+        // vacation option
+        switch (vacationList.get(0)) {
+            case "true":
+                LogData.printLog("방학 모드로 설정했습니다...", "run");
+                vacation();
+                break;
+            case "false":
+                LogData.printLog("학기 모드로 설정했습니다...", "run");
+                break;
+            default:
+                LogData.printLog("잘못된 명령어입니다. true나 false로 입력해주세요. --vacation=" + vacationList.get(0), "run");
+                throw new Exception();
+        }
+
+    }
+
+    private void parse() {
+        if (!parsingMenu.isDatabaseDataExist() || !parsingMenu.isRecentData()) {
+            parsingMenu.getDataAndSaveToDatabase();
+        }
+    }
+
+    private void vacation() {
+        parsingMenu.setVacation(true);
     }
 }
