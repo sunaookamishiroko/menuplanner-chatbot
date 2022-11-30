@@ -274,7 +274,12 @@ public class ParsingMenu {
     private HashMap<String, HashMap<String, String>> getEblockMenu(String fileName, String eBlockBookCode) {
         LogData.printLog("E동 메뉴 파싱중...", "getEblockMenu");
 
-        String url = endPoint + "/eblock?filename=" + fileName + "&bookcode=" + eBlockBookCode;
+        String url;
+        if (isVacation)
+            url = endPoint + "/veblock?filename=" + fileName + "&bookcode=" + eBlockBookCode;
+        else
+            url = endPoint + "/eblock?filename=" + fileName + "&bookcode=" + eBlockBookCode;
+
         HashMap<String, HashMap<String, String>> temp;
 
         try {
