@@ -2,7 +2,7 @@ package madeby.seoyun.menuplannerchatbotapi.controller;
 
 import madeby.seoyun.menuplannerchatbotapi.service.DefaultMessageService;
 import madeby.seoyun.menuplannerchatbotapi.service.EblockMenuService;
-import madeby.seoyun.menuplannerchatbotapi.component.ParsingMenuData;
+import madeby.seoyun.menuplannerchatbotapi.component.ParsingMenu;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,7 +19,7 @@ public class EblockMenuController {
 
     private final EblockMenuService eblockMenuService;
     private final DefaultMessageService defaultMessageService;
-    private final ParsingMenuData parsingMenuData;
+    private final ParsingMenu parsingMenu;
 
     @Value("${parsing-message}")
     private String parsingMessage;
@@ -29,10 +29,10 @@ public class EblockMenuController {
 
     @Autowired
     public EblockMenuController(EblockMenuService eblockMenuService, DefaultMessageService defaultMessageService,
-                                ParsingMenuData parsingMenuData) {
+                                ParsingMenu parsingMenu) {
         this.eblockMenuService = eblockMenuService;
         this.defaultMessageService = defaultMessageService;
-        this.parsingMenuData = parsingMenuData;
+        this.parsingMenu = parsingMenu;
     }
 
 
@@ -46,9 +46,9 @@ public class EblockMenuController {
      */
     @PostMapping("/eblock")
     public String getEblockMenu() {
-        if (parsingMenuData.checkParsingNowEblock())
+        if (parsingMenu.checkParsingNowEblock())
             return defaultMessageService.makeJson(parsingMessage);
-        else if (parsingMenuData.checkBeforeParsingEblock())
+        else if (parsingMenu.checkBeforeParsingEblock())
             return defaultMessageService.makeJson(mondayMessage);
         else
             return eblockMenuService.makeMenuJson();

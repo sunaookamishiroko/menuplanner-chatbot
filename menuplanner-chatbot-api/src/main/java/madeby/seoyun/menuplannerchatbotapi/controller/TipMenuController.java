@@ -1,6 +1,6 @@
 package madeby.seoyun.menuplannerchatbotapi.controller;
 
-import madeby.seoyun.menuplannerchatbotapi.component.ParsingMenuData;
+import madeby.seoyun.menuplannerchatbotapi.component.ParsingMenu;
 import madeby.seoyun.menuplannerchatbotapi.service.DefaultMessageService;
 import madeby.seoyun.menuplannerchatbotapi.service.TipMenuService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,7 @@ public class TipMenuController {
 
     private final TipMenuService tipMenuService;
     private final DefaultMessageService defaultMessageService;
-    private final ParsingMenuData parsingMenuData;
+    private final ParsingMenu parsingMenu;
 
     @Value("${parsing-message}")
     private String parsingMessage;
@@ -29,10 +29,10 @@ public class TipMenuController {
 
     @Autowired
     public TipMenuController(TipMenuService tipMenuService, DefaultMessageService defaultMessageService,
-                             ParsingMenuData parsingMenuData) {
+                             ParsingMenu parsingMenu) {
         this.tipMenuService = tipMenuService;
         this.defaultMessageService = defaultMessageService;
-        this.parsingMenuData = parsingMenuData;
+        this.parsingMenu = parsingMenu;
     }
 
     /**
@@ -45,9 +45,9 @@ public class TipMenuController {
      */
     @PostMapping("/tip")
     public String getTipMenu() {
-        if (parsingMenuData.checkParsingNowTIP())
+        if (parsingMenu.checkParsingNowTIP())
             return defaultMessageService.makeJson(parsingMessage);
-        else if (parsingMenuData.checkBeforeParsingTIP())
+        else if (parsingMenu.checkBeforeParsingTIP())
             return defaultMessageService.makeJson(mondayMessage);
         else
             return tipMenuService.makeMenuJson();
