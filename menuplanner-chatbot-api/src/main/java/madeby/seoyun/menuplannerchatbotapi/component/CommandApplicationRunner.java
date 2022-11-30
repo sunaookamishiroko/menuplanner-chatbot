@@ -16,11 +16,11 @@ import java.util.List;
  * @Author : lsy
  */
 @Component
-public class CheckApplicationRunner implements ApplicationRunner {
+public class CommandApplicationRunner implements ApplicationRunner {
     private ParsingMenu parsingMenu;
 
     @Autowired
-    public CheckApplicationRunner(ParsingMenu parsingMenu) {
+    public CommandApplicationRunner(ParsingMenu parsingMenu) {
         this.parsingMenu = parsingMenu;
     }
 
