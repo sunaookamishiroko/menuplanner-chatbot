@@ -1,10 +1,12 @@
 package madeby.seoyun.menuplannerchatbotapi.component;
 
+import madeby.seoyun.menuplannerchatbotapi.exceptions.WrongCommandException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,38 +25,50 @@ public class CheckApplicationRunner implements ApplicationRunner {
     }
 
     /**
-     * 파일 이름 DB에 데이터가 존재하지않거나, 데이터가 최신이 아니면
-     * 메뉴 파싱 데이터 저장 작업을 시작한다.
+     * 옵션에 따라 작업을 수행한다.
+     * --v=true  | 방학 모드
+     * --v=false | 학기 모드
+     * --p=true  | 파싱하기
+     * --p=false | 파싱하지 않기
      *
-     * @ param ApplicationArguments args : spring project를 실행할 때 넣는 실행 인자. 여기선 사용하지 않음
+     * @ param ApplicationArguments args : spring project를 실행할 때 넣는 실행 인자.
      * @ return : 없음
      */
     @Override
     public void run(ApplicationArguments args) throws Exception{
-        List<String> parseList = args.getOptionValues("parse");
-        List<String> vacationList = args.getOptionValues("vacation");
+        // parse option
+        List<String> parseList = args.getOptionValues("p");
+        // vacation option
+        List<String> vacationList = args.getOptionValues("v");
 
-        // 명령어 갯수에 따라 설정
-        switch (parseList.size()) {
-            case 0:
-                parseList.add("true");
-                break;
-            case 1:
-                break;
-            default:
-                LogData.printLog("잘못된 명령어입니다. 하나만 입력해주세요. --parse=" + parseList, "run");
-                throw new Exception();
+        // parse 명령어 체크
+        if (parseList == null) {
+            parseList = new ArrayList<>();
+            // 기본 -> 파싱 모드
+            parseList.add("true");
         }
 
-        switch (vacationList.size()) {
-            case 0:
-                vacationList.add("true");
-                break;
-            case 1:
-                break;
-            default:
-                LogData.printLog("잘못된 명령어입니다. 하나만 입력해주세요. --vacation=" + vacationList, "run");
-                throw new Exception();
+        if (parseList.size() > 1) {
+            throw new WrongCommandException("잘못된 명령어입니다. 하나만 입력해주세요. --p=" + parseList);
+        }
+
+        if (!parseList.get(0).equals("true") && !parseList.get(0).equals("false")) {
+            throw new WrongCommandException("잘못된 명령어입니다. true나 false로 입력해주세요. --p=" + parseList.get(0));
+        }
+
+        // vacation 명령어 체크
+        if (vacationList == null) {
+            vacationList = new ArrayList<>();
+            // 기본 -> 학기 모드
+            vacationList.add("false");
+        }
+
+        if (vacationList.size() > 1) {
+            throw new WrongCommandException("잘못된 명령어입니다. 하나만 입력해주세요. --v=" + vacationList);
+        }
+
+        if (!vacationList.get(0).equals("true") && !vacationList.get(0).equals("false")) {
+            throw new WrongCommandException("잘못된 명령어입니다. true나 false로 입력해주세요. --v=" + vacationList.get(0));
         }
 
         // parse option
@@ -66,9 +80,6 @@ public class CheckApplicationRunner implements ApplicationRunner {
             case "false":
                 LogData.printLog("파싱을 진행하지 않습니다...", "run");
                 break;
-            default:
-                LogData.printLog("잘못된 명령어입니다. true나 false로 입력해주세요. --parse=" + parseList.get(0), "run");
-                throw new Exception();
         }
 
         // vacation option
@@ -80,9 +91,6 @@ public class CheckApplicationRunner implements ApplicationRunner {
             case "false":
                 LogData.printLog("학기 모드로 설정했습니다...", "run");
                 break;
-            default:
-                LogData.printLog("잘못된 명령어입니다. true나 false로 입력해주세요. --vacation=" + vacationList.get(0), "run");
-                throw new Exception();
         }
 
     }
