@@ -1,6 +1,7 @@
 package madeby.seoyun.menuplannerchatbotapi.service;
 
 import madeby.seoyun.menuplannerchatbotapi.component.GetDateTime;
+import madeby.seoyun.menuplannerchatbotapi.component.ParsingMenu;
 import madeby.seoyun.menuplannerchatbotapi.exceptions.DatabaseConnectFailedException;
 import madeby.seoyun.menuplannerchatbotapi.model.TipMenu;
 import madeby.seoyun.menuplannerchatbotapi.repository.TipMenuRepository;
@@ -19,10 +20,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class TipMenuService {
     private final TipMenuRepository repository;
+    private final ParsingMenu parsingMenu;
 
     @Autowired
-    public TipMenuService(TipMenuRepository repository) {
+    public TipMenuService(TipMenuRepository repository, ParsingMenu parsingMenu) {
         this.repository = repository;
+        this.parsingMenu = parsingMenu;
     }
 
     /**
@@ -57,18 +60,28 @@ public class TipMenuService {
 
         JSONObject breakFastTime = new JSONObject();
         breakFastTime.put("title", "조식 시간");
-        //breakFastTime.put("description", "08:30 - 09:30");
-        breakFastTime.put("description", "09:30 - 11:00");
+
+        if(parsingMenu.checkVacation())
+            breakFastTime.put("description", "08:30 - 09:30");
+        else
+            breakFastTime.put("description", "09:30 - 11:00");
 
         JSONObject lunchTime = new JSONObject();
         lunchTime.put("title", "중식 시간");
-        lunchTime.put("description", "11:30 - 14:30");
-        //lunchTime.put("description", "11:30 - 14:00");
+
+        if(parsingMenu.checkVacation())
+            lunchTime.put("description", "11:30 - 14:00");
+        else
+            lunchTime.put("description", "11:30 - 14:30");
+
 
         JSONObject dinnerTime = new JSONObject();
         dinnerTime.put("title", "석식 시간");
-        dinnerTime.put("description", "17:00 - 18:50");
-        //dinnerTime.put("description", "17:30 - 18:30");
+
+        if(parsingMenu.checkVacation())
+            dinnerTime.put("description", "17:30 - 18:30");
+        else
+            dinnerTime.put("description", "17:00 - 18:50");
 
         JSONObject breakFastPrice = new JSONObject();
         breakFastPrice.put("title", "셀프라면 가격");
@@ -127,12 +140,9 @@ public class TipMenuService {
             dinner = tipMenu.getDinner();
         }
 
-        String menu = "조식 ▼\n\n" +
-                breakFast +
-                "\n\n중식 ▼\n\n" +
-                lunch +
-                "\n\n석식 ▼\n\n" +
-                dinner;
+        String menu = "조식 ▼\n\n" + breakFast +
+                "\n\n중식 ▼\n\n" + lunch +
+                "\n\n석식 ▼\n\n" + dinner;
 
         return menu;
     }
