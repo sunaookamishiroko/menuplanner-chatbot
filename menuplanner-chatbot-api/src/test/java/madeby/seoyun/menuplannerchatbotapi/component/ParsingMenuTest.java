@@ -11,7 +11,7 @@ import org.springframework.boot.test.mock.mockito.SpyBean;
 
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @DataJpaTest
-class ParsingMenuDataTest {
+class ParsingMenuTest {
 
     @Autowired
     private TipMenuRepository tipMenuRepository;
@@ -20,11 +20,11 @@ class ParsingMenuDataTest {
     @Autowired
     private FileNameRepository fileNameRepository;
     @SpyBean
-    private ParsingMenuData parsingMenuData;
+    private ParsingMenu parsingMenu;
 
     @Test
     void testGetDataAndSaveToDatabaseEblock() {
-        parsingMenuData.getDataAndSaveToDatabaseEblock();
+        parsingMenu.getDataAndSaveToDatabaseEblock();
         String[] arr = {"10월 17일", "10월 18일", "10월 19일", "10월 20일", "10월 21일"};
         System.out.println("파일 이름 : " + fileNameRepository.findByName("0").getFileName());
         for (String date : arr) {
@@ -39,7 +39,7 @@ class ParsingMenuDataTest {
 
     @Test
     void getDataAndSaveToDatabaseTip() {
-        parsingMenuData.getDataAndSaveToDatabaseTip();
+        parsingMenu.getDataAndSaveToDatabaseTip();
         String[] arr = {"9월 12일", "9월 13일", "9월 14일", "9월 15일", "9월 16일", "9월 17일", "9월 18일"};
 
         for (String date : arr) {
