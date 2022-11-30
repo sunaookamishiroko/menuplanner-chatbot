@@ -111,10 +111,8 @@ public class EblockMenuService {
             lunch = eblockMenu.getLunch();
             dinner = eblockMenu.getDinner();
         }
-        String menu = "\n\n중식 ▼\n\n" +
-                lunch +
-                "\n\n석식 ▼\n\n" +
-                dinner;
+        String menu = "\n\n중식 ▼\n\n" + lunch +
+                "\n\n석식 ▼\n\n" + dinner;
 
         return menu;
     }

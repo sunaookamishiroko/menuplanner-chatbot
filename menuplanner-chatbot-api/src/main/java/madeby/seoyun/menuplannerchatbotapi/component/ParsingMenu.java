@@ -22,11 +22,11 @@ import java.util.Map;
  * 파일 이름 파싱, 메뉴 파싱을 요청하여 DB에 저장하기 위한 컴포넌트
  * DB에 데이터가 존재하거나 최신 데이터인지 비교하는 역할도 포함
  *
- * @filename : ParsingMenuData.java
+ * @filename : ParsingMenu.java
  * @Author : lsy
  */
 @Component
-public class ParsingMenuData {
+public class ParsingMenu {
     private final TipMenuRepository tipMenuRepository;
     private final EblockMenuRepository eblockMenuRepository;
     private final FileNameRepository fileNameRepository;
@@ -37,12 +37,14 @@ public class ParsingMenuData {
     private boolean isBeforeParsingEblock = false;
     private boolean isBeforeParsingTIP = false;
 
+    private boolean isVacation = false;
+
     @Value("${parsing-endpoint}")
     private String endPoint;
 
     @Autowired
-    public ParsingMenuData(TipMenuRepository tipMenuRepository, EblockMenuRepository eblockMenuRepository,
-                           FileNameRepository fileNameRepository) {
+    public ParsingMenu(TipMenuRepository tipMenuRepository, EblockMenuRepository eblockMenuRepository,
+                       FileNameRepository fileNameRepository) {
         this.tipMenuRepository = tipMenuRepository;
         this.eblockMenuRepository = eblockMenuRepository;
         this.fileNameRepository = fileNameRepository;
@@ -432,6 +434,26 @@ public class ParsingMenuData {
      */
     public boolean checkParsingNowTIP() {
         return isParsingNowTIP;
+    }
+
+    /**
+     * isVacation flag를 설정한다.
+     *
+     * @ param boolean flag : 변경할 값
+     * @ return : 없음
+     */
+    public void setVacation(boolean flag) {
+        isVacation = flag;
+    }
+
+    /**
+     * 방학 모드인지 학기 모드인지 알려준다.
+     *
+     * @ param : 없음
+     * @ return : boolean : 방학 모드면 true, 학기 모드면 false
+     */
+    public boolean checkVacation() {
+        return isVacation;
     }
 
 }
