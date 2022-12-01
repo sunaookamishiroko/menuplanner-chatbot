@@ -31,3 +31,7 @@ Docker 사용 X
 4. `java -jar menuplanner-chatbot-api-x.x.x-RELEASE.jar --p=true --v=true` 같이 옵션을 설정할 수 있습니다.
 
 Docker 사용 O
+1. `application.yml`에서 DB, 크롤링 endpoint를 설정합니다.
+2. `./gradlew build`로 빌드합니다.
+3. `docker build --platform linux/amd64 -t username/imagename:x.x.x .`로 빌드합니다.
+4. `docker run -d --name server -p 8080:8080 username/imagename:x.x.x --p=false --v=true`로 실행합니다.
