@@ -95,6 +95,8 @@ def lambda_handler(event, context):
 
                 if temp == "미운영":
                     dash = ''
+                elif temp == "국내산":
+                    break
                 else:
                     dash = '- '
 
