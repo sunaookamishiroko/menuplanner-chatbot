@@ -42,3 +42,9 @@
 
 - [spring 서버](https://github.com/somewheregreeny/menuplanner-chatbot/tree/main/menuplanner-chatbot-api)
 - [aws lambda python](https://github.com/somewheregreeny/menuplanner-chatbot/tree/main/aws-rambda-python)
+
+## 업데이트 예정
+
+- 가격/시간 DB 분리, DB 업데이트 툴
+- 무중단 배포
+- resttemplate -> webclient로 변경하기
