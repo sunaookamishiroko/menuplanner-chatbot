@@ -56,7 +56,7 @@ public class CommandApplicationRunner implements ApplicationRunner {
             throw new WrongCommandException("잘못된 명령어입니다. 하나만 입력해주세요. --vacation=" + vacationList);
         }
 
-        if (!vacationList.get(0).equals("true") && !vacationList.get(0).equals("f")) {
+        if (!vacationList.get(0).equals("t") && !vacationList.get(0).equals("f")) {
             throw new WrongCommandException("잘못된 명령어입니다. true나 false로 입력해주세요. --vacation=" + vacationList.get(0));
         }
 
@@ -71,7 +71,7 @@ public class CommandApplicationRunner implements ApplicationRunner {
             throw new WrongCommandException("잘못된 명령어입니다. 하나만 입력해주세요. --parse=" + parseList);
         }
 
-        if (!parseList.get(0).equals("true") && !parseList.get(0).equals("f")) {
+        if (!parseList.get(0).equals("t") && !parseList.get(0).equals("f")) {
             throw new WrongCommandException("잘못된 명령어입니다. true나 false로 입력해주세요. --parse=" + parseList.get(0));
         }
 
