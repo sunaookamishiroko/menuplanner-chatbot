@@ -12,22 +12,22 @@ import java.util.List;
 /**
  * 서버가 시작될 때 명령어를 받아 수행하는 컴포넌트
  *
- * @filename : CheckDatabaseApplicationRunner.java
+ * @filename : CommandApplicationRunner.java
  * @Author : lsy
  */
 @Component
 public class CommandApplicationRunner implements ApplicationRunner {
-    private ParsingMenu parsingMenu;
+    private final ParsingMenu parsingMenu;
+    private final SettingProperty settingProperty;
 
     @Autowired
-    public CommandApplicationRunner(ParsingMenu parsingMenu) {
+    public CommandApplicationRunner(ParsingMenu parsingMenu, SettingProperty settingProperty) {
         this.parsingMenu = parsingMenu;
+        this.settingProperty = settingProperty;
     }
 
     /**
      * 옵션에 따라 작업을 수행한다.
-     * --vacation=t  | 방학 모드
-     * --vacation=f | 학기 모드
      * --parse=t  | 파싱하기
      * --parse=f | 파싱하지 않기
      * --forse   | 최근 데이터 / DB에 데이터 존재 유무 상관없이 강제로 파싱하기
@@ -37,28 +37,10 @@ public class CommandApplicationRunner implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception{
 
-        // vacation option
-        List<String> vacationList = args.getOptionValues("--vacation");
         // parse option
         List<String> parseList = args.getOptionValues("--parse");
         // parse force option
         List<String> forceList = args.getOptionValues("--force");
-
-
-        // vacation 명령어 체크
-        if (vacationList == null) {
-            vacationList = new ArrayList<>();
-            // 기본 -> 학기 모드
-            vacationList.add("f");
-        }
-
-        if (vacationList.size() > 1) {
-            throw new WrongCommandException("잘못된 명령어입니다. 하나만 입력해주세요. --vacation=" + vacationList);
-        }
-
-        if (!vacationList.get(0).equals("t") && !vacationList.get(0).equals("f")) {
-            throw new WrongCommandException("잘못된 명령어입니다. true나 false로 입력해주세요. --vacation=" + vacationList.get(0));
-        }
 
         // parse 명령어 체크
         if (parseList == null) {
@@ -84,40 +66,51 @@ public class CommandApplicationRunner implements ApplicationRunner {
             forceList.add(0, "t");
         }
 
-        // vacation option
-        switch (vacationList.get(0)) {
-            case "t":
-                LogData.printLog("방학 모드로 설정했습니다...", "run");
-                vacation();
-                break;
-            case "f":
-                LogData.printLog("학기 모드로 설정했습니다...", "run");
-                break;
-        }
+        // 식당 정보 존재, 방학 모드 체크
+        setting();
 
         // parse option
         switch (parseList.get(0)) {
             case "t":
-                LogData.printLog("파싱을 진행합니다...", "run");
                 parse(forceList.get(0));
                 break;
             case "f":
                 LogData.printLog("파싱을 진행하지 않습니다...", "run");
                 break;
         }
-
     }
 
+    /**
+     * 옵션에 따라 파싱을 수행한다.
+     *
+     * @ param String force : true면 파싱 강제 실행
+     * @ return : 없음
+     */
     private void parse(String force) {
         if (force.equals("t")) {
+            LogData.printLog("파싱을 진행합니다...", "parse");
             parsingMenu.getDataAndSaveToDatabase();
         }
         else if (!parsingMenu.isDatabaseDataExist() || !parsingMenu.isRecentData()) {
+            LogData.printLog("파싱을 진행합니다...", "parse");
             parsingMenu.getDataAndSaveToDatabase();
         }
     }
 
-    private void vacation() {
-        parsingMenu.setVacation(true);
+    /**
+     * 식당 정보가 존재하지 않으면 기본 정보를 생성하고
+     * 방학 모드에 대한 정보가 존재하면 해당 세팅으로 바꾼다.
+     *
+     * @ param : 없음
+     * @ return : 없음
+     */
+    private void setting() {
+        if (!settingProperty.isPropertyExist()) {
+            settingProperty.saveProperty();
+        }
+        if (settingProperty.isVacationExist()) {
+            settingProperty.setVacation();
+        }
     }
+
 }
