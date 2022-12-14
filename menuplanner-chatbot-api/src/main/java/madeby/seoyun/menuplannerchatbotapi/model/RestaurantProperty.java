@@ -29,10 +29,6 @@ public class RestaurantProperty {
 
     private String menuUrl;
 
-    @OneToOne
-    @PrimaryKeyJoinColumn
-    private RestaurantMenu restaurantMenu;
-
     public RestaurantProperty() {}
 
     public RestaurantProperty(int id, @Nullable String breakFastTime, String lunchTime, String dinnerTime, @Nullable String breakFastPrice, String commonPrice, String menuUrl) {
@@ -101,13 +97,5 @@ public class RestaurantProperty {
 
     public void setMenuUrl(String menuUrl) {
         this.menuUrl = menuUrl;
-    }
-
-    public RestaurantMenu getRestaurantMenu() {
-        return restaurantMenu;
-    }
-
-    public void setRestaurantMenu(RestaurantMenu restaurantMenu) {
-        this.restaurantMenu = restaurantMenu;
     }
 }
