@@ -47,9 +47,9 @@ public class EblockMenuController {
     @PostMapping("/eblock")
     public String getEblockMenu() {
         if (parsingMenu.checkBeforeParsingEblock())
-            return defaultMessageService.makeJson(parsingMessage);
-        else if (parsingMenu.checkParsingNowEblock())
             return defaultMessageService.makeJson(mondayMessage);
+        else if (parsingMenu.checkParsingNowEblock())
+            return defaultMessageService.makeJson(parsingMessage);
         else
             return eblockMenuService.makeMenuJson();
     }
