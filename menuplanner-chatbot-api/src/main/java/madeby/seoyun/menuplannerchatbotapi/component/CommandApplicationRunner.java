@@ -66,7 +66,7 @@ public class CommandApplicationRunner implements ApplicationRunner {
             forceList.add(0, "t");
         }
 
-        // 식당 정보 존재, 방학 모드 체크
+        // 식당 정보, 서버 운영 정보 존재 체크
         setting();
 
         // parse option
@@ -98,8 +98,7 @@ public class CommandApplicationRunner implements ApplicationRunner {
     }
 
     /**
-     * 식당 정보가 존재하지 않으면 기본 정보를 생성하고
-     * 방학 모드에 대한 정보가 존재하면 해당 세팅으로 바꾼다.
+     * 식당 정보, 서버 운영 정보가 존재하지 않으면 기본 정보를 생성한다.
      *
      * @ param : 없음
      * @ return : 없음
@@ -108,8 +107,9 @@ public class CommandApplicationRunner implements ApplicationRunner {
         if (!settingProperty.isPropertyExist()) {
             settingProperty.saveProperty();
         }
-        if (settingProperty.isVacationExist()) {
-            settingProperty.setVacation();
+
+        if (!settingProperty.isServerInfoExist()) {
+            settingProperty.saveServerInfo();
         }
     }
 
