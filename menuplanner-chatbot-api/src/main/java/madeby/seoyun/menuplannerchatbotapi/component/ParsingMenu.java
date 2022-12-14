@@ -13,7 +13,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * 파일 이름 파싱, 메뉴 파싱을 요청하여 DB에 저장하기 위한 컴포넌트
@@ -26,7 +25,7 @@ import java.util.Optional;
 public class ParsingMenu {
     private final RestaurantMenuRepository restaurantMenuRepository;
     private final RestaurantPropertyRepository restaurantPropertyRepository;
-    private final RestaurantInfoRepository restaurantInfoRepository;
+    private final RestaurantFileNameRepository restaurantFileNameRepository;
     private final SettingProperty settingProperty;
     private final RestTemplate restTemplate;
 
@@ -39,11 +38,11 @@ public class ParsingMenu {
     private String endPoint;
 
     @Autowired
-    public ParsingMenu(RestaurantInfoRepository restaurantInfoRepository, RestaurantMenuRepository restaurantMenuRepository,
+    public ParsingMenu(RestaurantFileNameRepository restaurantFileNameRepository, RestaurantMenuRepository restaurantMenuRepository,
                        RestaurantPropertyRepository restaurantPropertyRepository, SettingProperty settingProperty) {
         this.restaurantMenuRepository = restaurantMenuRepository;
         this.restaurantPropertyRepository = restaurantPropertyRepository;
-        this.restaurantInfoRepository = restaurantInfoRepository;
+        this.restaurantFileNameRepository = restaurantFileNameRepository;
         this.settingProperty = settingProperty;
         this.restTemplate = new RestTemplateBuilder().build();
     }
@@ -76,8 +75,8 @@ public class ParsingMenu {
     public void checkUploadMenu() throws Exception{
         LogData.printLog("메뉴 파일 업로드 체크를 시작합니다...", "checkUploadMenu");
 
-        String eBlockFileName = restaurantInfoRepository.findById(0).orElseThrow().getFileName();
-        String tipFileName = restaurantInfoRepository.findById(1).orElseThrow().getFileName();
+        String eBlockFileName = restaurantFileNameRepository.findById(0).orElseThrow().getFileName();
+        String tipFileName = restaurantFileNameRepository.findById(1).orElseThrow().getFileName();
 
         boolean isEblockUploaded = false;
         boolean isTipUploaded = false;
@@ -202,8 +201,8 @@ public class ParsingMenu {
     public boolean isDatabaseDataExist() {
         LogData.printLog("DB에 파일 이름 존재하는지 확인...", "isDatabaseDataExist");
 
-        if (restaurantInfoRepository.findById(0).isPresent()
-                && restaurantInfoRepository.findById(1).isPresent()) {
+        if (restaurantFileNameRepository.findById(0).isPresent()
+                && restaurantFileNameRepository.findById(1).isPresent()) {
             LogData.printLog("파일 이름이 존재합니다", "isDatabaseDataExist");
             return true;
         } else {
@@ -227,8 +226,8 @@ public class ParsingMenu {
         String eBlockFileName = getFileInfo(0).get("fileName");
         String tipFileName = getFileInfo(1).get("fileName");
 
-        if (eBlockFileName.equals(restaurantInfoRepository.findById(0).orElseThrow().getFileName())
-                && tipFileName.equals(restaurantInfoRepository.findById(1).orElseThrow().getFileName())) {
+        if (eBlockFileName.equals(restaurantFileNameRepository.findById(0).orElseThrow().getFileName())
+                && tipFileName.equals(restaurantFileNameRepository.findById(1).orElseThrow().getFileName())) {
             LogData.printLog("최신 데이터입니다", "isRecentData");
             return true;
         } else {
@@ -277,7 +276,7 @@ public class ParsingMenu {
         LogData.printLog("E동 메뉴 파싱중...", "getEblockMenu");
 
         String url;
-        if (settingProperty.checkVacation())
+        if (settingProperty.checkIsVacation(0))
             url = endPoint + "/veblock?filename=" + fileName + "&bookcode=" + eBlockBookCode;
         else
             url = endPoint + "/eblock?filename=" + fileName + "&bookcode=" + eBlockBookCode;
@@ -386,12 +385,7 @@ public class ParsingMenu {
     public void saveEblockFileName(String eBlockFileName) {
         LogData.printLog("E동 파일 이름 DB에 저장중...", "saveEblockFileName");
 
-        Optional<RestaurantInfo> optional = restaurantInfoRepository.findById(0);
-        if(optional.isPresent()) {
-            restaurantInfoRepository.save(new RestaurantInfo(0, eBlockFileName, optional.get().isVacation()));
-        } else {
-            restaurantInfoRepository.save(new RestaurantInfo(0, eBlockFileName, false));
-        }
+        restaurantFileNameRepository.save(new RestaurantFileName(0, eBlockFileName));
 
         LogData.printLog("저장 완료", "saveEblockFileName");
     }
@@ -406,12 +400,7 @@ public class ParsingMenu {
     public void saveTipFileName(String tipFileName) {
         LogData.printLog("TIP 파일 이름 DB에 저장중...", "saveTipFileName");
 
-        Optional<RestaurantInfo> optional = restaurantInfoRepository.findById(1);
-        if(optional.isPresent()) {
-            restaurantInfoRepository.save(new RestaurantInfo(1, tipFileName, optional.get().isVacation()));
-        } else {
-            restaurantInfoRepository.save(new RestaurantInfo(1, tipFileName, false));
-        }
+        restaurantFileNameRepository.save(new RestaurantFileName(1, tipFileName));
 
         LogData.printLog("저장 완료", "saveTipFileName");
     }
