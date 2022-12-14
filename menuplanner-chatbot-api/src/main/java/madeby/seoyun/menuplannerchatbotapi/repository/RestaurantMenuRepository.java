@@ -1,6 +1,7 @@
 package madeby.seoyun.menuplannerchatbotapi.repository;
 
 import madeby.seoyun.menuplannerchatbotapi.model.RestaurantMenu;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface RestaurantMenuRepository extends JpaRepository<RestaurantMenu, Long> {
+    @EntityGraph(attributePaths = "restaurantProperty")
     RestaurantMenu findByRestaurantPropertyIdAndDate(int restaurantCode, String date);
     void deleteAllByRestaurantPropertyId(int restaurantCode);
 }
