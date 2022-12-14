@@ -103,10 +103,10 @@ public class TipMenuService {
     }
 
     /**
-     * 서버의 날짜의 TIP 지하 식당 메뉴를 DB에서 가져와서 메뉴 정보 문자열 생성 후 반환한다.
+     * 오늘 날짜의 TIP 지하 식당 메뉴와 정보를 가져와서 객체로 반환한다.
      *
      * @ param : 없음
-     * @ return String menu : 메뉴 정보를 합친 문자열
+     * @ return RestaurantMenu : 메뉴 정보 객체
      */
     @Transactional(readOnly = true)
     public RestaurantMenu getTodayTipMenu() {
@@ -122,6 +122,12 @@ public class TipMenuService {
         return menu;
     }
 
+    /**
+     * RestaurantMenu의 메뉴 내용을 문자열로 만들어 반환한다.
+     *
+     * @ param : RestaurantMenu : DB에서 가져온 메뉴 정보 객체
+     * @ return String : 메뉴 문자열
+     */
     public String getMenuStr(RestaurantMenu menu) {
         String breakFast = "미운영";
         String lunch = "미운영";
