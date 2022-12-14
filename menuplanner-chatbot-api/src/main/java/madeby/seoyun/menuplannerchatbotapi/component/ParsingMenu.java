@@ -1,12 +1,8 @@
 package madeby.seoyun.menuplannerchatbotapi.component;
 
 import madeby.seoyun.menuplannerchatbotapi.exceptions.ParsingDataFailedException;
-import madeby.seoyun.menuplannerchatbotapi.model.EblockMenu;
-import madeby.seoyun.menuplannerchatbotapi.model.FileName;
-import madeby.seoyun.menuplannerchatbotapi.model.TipMenu;
-import madeby.seoyun.menuplannerchatbotapi.repository.EblockMenuRepository;
-import madeby.seoyun.menuplannerchatbotapi.repository.FileNameRepository;
-import madeby.seoyun.menuplannerchatbotapi.repository.TipMenuRepository;
+import madeby.seoyun.menuplannerchatbotapi.model.*;
+import madeby.seoyun.menuplannerchatbotapi.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -17,6 +13,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * 파일 이름 파싱, 메뉴 파싱을 요청하여 DB에 저장하기 위한 컴포넌트
@@ -27,9 +24,10 @@ import java.util.Map;
  */
 @Component
 public class ParsingMenu {
-    private final TipMenuRepository tipMenuRepository;
-    private final EblockMenuRepository eblockMenuRepository;
-    private final FileNameRepository fileNameRepository;
+    private final RestaurantMenuRepository restaurantMenuRepository;
+    private final RestaurantPropertyRepository restaurantPropertyRepository;
+    private final RestaurantInfoRepository restaurantInfoRepository;
+    private final SettingProperty settingProperty;
     private final RestTemplate restTemplate;
 
     private boolean isParsingNowEblock = false;
@@ -37,17 +35,16 @@ public class ParsingMenu {
     private boolean isBeforeParsingEblock = false;
     private boolean isBeforeParsingTIP = false;
 
-    private boolean isVacation = false;
-
     @Value("${parsing-endpoint}")
     private String endPoint;
 
     @Autowired
-    public ParsingMenu(TipMenuRepository tipMenuRepository, EblockMenuRepository eblockMenuRepository,
-                       FileNameRepository fileNameRepository) {
-        this.tipMenuRepository = tipMenuRepository;
-        this.eblockMenuRepository = eblockMenuRepository;
-        this.fileNameRepository = fileNameRepository;
+    public ParsingMenu(RestaurantInfoRepository restaurantInfoRepository, RestaurantMenuRepository restaurantMenuRepository,
+                       RestaurantPropertyRepository restaurantPropertyRepository, SettingProperty settingProperty) {
+        this.restaurantMenuRepository = restaurantMenuRepository;
+        this.restaurantPropertyRepository = restaurantPropertyRepository;
+        this.restaurantInfoRepository = restaurantInfoRepository;
+        this.settingProperty = settingProperty;
         this.restTemplate = new RestTemplateBuilder().build();
     }
 
@@ -78,8 +75,9 @@ public class ParsingMenu {
     @Scheduled(cron = "0 0 7 * * 1")
     public void checkUploadMenu() throws Exception{
         LogData.printLog("메뉴 파일 업로드 체크를 시작합니다...", "checkUploadMenu");
-        String eBlockFileName = fileNameRepository.findByName("0").getFileName();
-        String tipFileName = fileNameRepository.findByName("1").getFileName();
+
+        String eBlockFileName = restaurantInfoRepository.findById(0).orElseThrow().getFileName();
+        String tipFileName = restaurantInfoRepository.findById(1).orElseThrow().getFileName();
 
         boolean isEblockUploaded = false;
         boolean isTipUploaded = false;
@@ -95,7 +93,7 @@ public class ParsingMenu {
 
         while(true) {
             if (!isEblockUploaded) {
-                newEblockFileName = getFileInfo("0").get("fileName");
+                newEblockFileName = getFileInfo(0).get("fileName");
 
                 if (!newEblockFileName.equals(eBlockFileName)) {
                     LogData.printLog("메뉴 업로드가 감지되었습니다...", "checkUploadMenu");
@@ -105,7 +103,7 @@ public class ParsingMenu {
             }
 
             if (!isTipUploaded) {
-                newTipFileName = getFileInfo("1").get("fileName");
+                newTipFileName = getFileInfo(1).get("fileName");
 
                 if (!newTipFileName.equals(tipFileName)) {
                     LogData.printLog("메뉴 업로드가 감지되었습니다...", "checkUploadMenu");
@@ -130,6 +128,8 @@ public class ParsingMenu {
      * @ return : 없음
      */
     public void getDataAndSaveToDatabase() {
+        isParsingNowEblock = true;
+        isParsingNowTIP = true;
         getDataAndSaveToDatabaseEblock();
         getDataAndSaveToDatabaseTip();
     }
@@ -145,10 +145,12 @@ public class ParsingMenu {
     public void getDataAndSaveToDatabaseEblock() {
         LogData.printLog("E동 파싱 작업 시작...", "getDataAndSaveToDatabaseEblock");
 
-        Map<String, String> eBlockFileInfo = getFileInfo("0");
+        Map<String, String> eBlockFileInfo = getFileInfo(0);
 
         String eBlockFileName = eBlockFileInfo.get("fileName");
         String eBlockBookCode = eBlockFileInfo.get("bookCode");
+
+        saveEblockFileName(eBlockFileName);
 
         HashMap<String, HashMap<String, String>> eBlockMenu =
                 getEblockMenu(eBlockFileName, eBlockBookCode);
@@ -156,7 +158,6 @@ public class ParsingMenu {
         eBlockMenuKeys = eBlockMenu.keySet().toArray(eBlockMenuKeys);
 
         saveEblockMenu(eBlockMenu, eBlockMenuKeys);
-        saveEblockFileName(eBlockFileName);
 
         isParsingNowEblock = false;
         LogData.printLog("파싱 작업 완료", "getDataAndSaveToDatabaseEblock");
@@ -173,10 +174,12 @@ public class ParsingMenu {
     public void getDataAndSaveToDatabaseTip() {
         LogData.printLog("TIP 파싱 작업 시작...", "getDataAndSaveToDatabaseTip");
 
-        Map<String, String> tipFileInfo = getFileInfo("1");
+        Map<String, String> tipFileInfo = getFileInfo(1);
 
         String tipFileName = tipFileInfo.get("fileName");
         String tipBookCode = tipFileInfo.get("bookCode");
+
+        saveTipFileName(tipFileName);
 
         HashMap<String, HashMap<String, String>> tipMenu =
                 getTipMenu(tipFileName, tipBookCode);
@@ -184,7 +187,6 @@ public class ParsingMenu {
         tipMenuKeys = tipMenu.keySet().toArray(tipMenuKeys);
 
         saveTipMenu(tipMenu, tipMenuKeys);
-        saveTipFileName(tipFileName);
 
         isParsingNowTIP = false;
         LogData.printLog("파싱 작업 완료", "getDataAndSaveToDatabaseTip");
@@ -200,8 +202,8 @@ public class ParsingMenu {
     public boolean isDatabaseDataExist() {
         LogData.printLog("DB에 파일 이름 존재하는지 확인...", "isDatabaseDataExist");
 
-        if (fileNameRepository.findByName("0") != null
-                && fileNameRepository.findByName("1") != null) {
+        if (restaurantInfoRepository.findById(0).isPresent()
+                && restaurantInfoRepository.findById(1).isPresent()) {
             LogData.printLog("파일 이름이 존재합니다", "isDatabaseDataExist");
             return true;
         } else {
@@ -222,11 +224,11 @@ public class ParsingMenu {
     public boolean isRecentData() {
         LogData.printLog("최신 데이터인지 확인...", "isRecentData");
 
-        String eBlockFileName = getFileInfo("0").get("fileName");
-        String tipFileName = getFileInfo("1").get("fileName");
+        String eBlockFileName = getFileInfo(0).get("fileName");
+        String tipFileName = getFileInfo(1).get("fileName");
 
-        if (eBlockFileName.equals(fileNameRepository.findByName("0").getFileName())
-                && tipFileName.equals(fileNameRepository.findByName("1").getFileName())) {
+        if (eBlockFileName.equals(restaurantInfoRepository.findById(0).orElseThrow().getFileName())
+                && tipFileName.equals(restaurantInfoRepository.findById(1).orElseThrow().getFileName())) {
             LogData.printLog("최신 데이터입니다", "isRecentData");
             return true;
         } else {
@@ -242,10 +244,10 @@ public class ParsingMenu {
      * @ return Map<String, String> temp : json 형식의 데이터를 map으로 받아서 반환
      * @ exception ParsingDataFailedException : 파싱에 실패할 경우 발생
      */
-    private HashMap<String, String> getFileInfo(String num) {
-        if(num.equals("0"))
+    private HashMap<String, String> getFileInfo(int num) {
+        if(num == 0)
             LogData.printLog("E동 메뉴 파일 이름 파싱중...", "getFileName");
-        else if(num.equals("1"))
+        else if(num == 1)
             LogData.printLog("TIP 메뉴 파일 이름 파싱중...", "getFileName");
 
         String url = endPoint + "/fileinfo?classify=" + num;
@@ -275,7 +277,7 @@ public class ParsingMenu {
         LogData.printLog("E동 메뉴 파싱중...", "getEblockMenu");
 
         String url;
-        if (isVacation)
+        if (settingProperty.checkVacation())
             url = endPoint + "/veblock?filename=" + fileName + "&bookcode=" + eBlockBookCode;
         else
             url = endPoint + "/eblock?filename=" + fileName + "&bookcode=" + eBlockBookCode;
@@ -329,14 +331,16 @@ public class ParsingMenu {
             Map<String, HashMap<String, String>> eBlockMenu, String[] eBlockMenuKeys) {
         LogData.printLog("E동 메뉴 DB에 저장중...", "saveEblockMenu");
 
-        eblockMenuRepository.deleteAll();
+        restaurantMenuRepository.deleteAllByRestaurantPropertyId(0);
+        RestaurantProperty property = restaurantPropertyRepository.getById(0);
 
         for (String eBlockMenuKey : eBlockMenuKeys) {
             String tempLunchList = eBlockMenu.get(eBlockMenuKey).get("lunch");
             String tempDinnerList = eBlockMenu.get(eBlockMenuKey).get("dinner");
 
-            eblockMenuRepository.save(
-                    new EblockMenu(eBlockMenuKey, tempLunchList, tempDinnerList)
+            restaurantMenuRepository.save(
+                    new RestaurantMenu(
+                            eBlockMenuKey, null, tempLunchList, tempDinnerList, property)
             );
         }
 
@@ -356,15 +360,16 @@ public class ParsingMenu {
             Map<String, HashMap<String, String>> tipMenu, String[] tipMenuKeys) {
         LogData.printLog("TIP 메뉴 DB에 저장중...", "saveTipMenu");
 
-        tipMenuRepository.deleteAll();
+        restaurantMenuRepository.deleteAllByRestaurantPropertyId(1);
+        RestaurantProperty property = restaurantPropertyRepository.getById(1);
 
         for (String tipMenuKey : tipMenuKeys) {
             String tempBreakFastList = tipMenu.get(tipMenuKey).get("breakFast");
             String tempLunchList = tipMenu.get(tipMenuKey).get("lunch");
             String tempDinnerList = tipMenu.get(tipMenuKey).get("dinner");
 
-            tipMenuRepository.save(
-                    new TipMenu(tipMenuKey, tempBreakFastList, tempLunchList, tempDinnerList)
+            restaurantMenuRepository.save(
+                    new RestaurantMenu(tipMenuKey, tempBreakFastList, tempLunchList, tempDinnerList, property)
             );
         }
 
@@ -381,7 +386,12 @@ public class ParsingMenu {
     public void saveEblockFileName(String eBlockFileName) {
         LogData.printLog("E동 파일 이름 DB에 저장중...", "saveEblockFileName");
 
-        fileNameRepository.save(new FileName("0", eBlockFileName));
+        Optional<RestaurantInfo> optional = restaurantInfoRepository.findById(0);
+        if(optional.isPresent()) {
+            restaurantInfoRepository.save(new RestaurantInfo(0, eBlockFileName, optional.get().isVacation()));
+        } else {
+            restaurantInfoRepository.save(new RestaurantInfo(0, eBlockFileName, false));
+        }
 
         LogData.printLog("저장 완료", "saveEblockFileName");
     }
@@ -396,7 +406,12 @@ public class ParsingMenu {
     public void saveTipFileName(String tipFileName) {
         LogData.printLog("TIP 파일 이름 DB에 저장중...", "saveTipFileName");
 
-        fileNameRepository.save(new FileName("1", tipFileName));
+        Optional<RestaurantInfo> optional = restaurantInfoRepository.findById(1);
+        if(optional.isPresent()) {
+            restaurantInfoRepository.save(new RestaurantInfo(1, tipFileName, optional.get().isVacation()));
+        } else {
+            restaurantInfoRepository.save(new RestaurantInfo(1, tipFileName, false));
+        }
 
         LogData.printLog("저장 완료", "saveTipFileName");
     }
@@ -440,25 +455,4 @@ public class ParsingMenu {
     public boolean checkParsingNowTIP() {
         return isParsingNowTIP;
     }
-
-    /**
-     * isVacation flag를 설정한다.
-     *
-     * @ param boolean flag : 변경할 값
-     * @ return : 없음
-     */
-    public void setVacation(boolean flag) {
-        isVacation = flag;
-    }
-
-    /**
-     * 방학 모드인지 학기 모드인지 알려준다.
-     *
-     * @ param : 없음
-     * @ return : boolean : 방학 모드면 true, 학기 모드면 false
-     */
-    public boolean checkVacation() {
-        return isVacation;
-    }
-
 }
