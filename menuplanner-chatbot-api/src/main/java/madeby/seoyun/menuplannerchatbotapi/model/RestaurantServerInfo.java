@@ -6,26 +6,24 @@ import javax.persistence.Table;
 import java.io.Serializable;
 
 /**
- * 각각 식당들의 메뉴 파일 이름에 대한 DB 스키마 정의
+ * 각각 식당들의 정보에 대한 DB 스키마 정의
  *
  * @filename : RestaurantInfo.java
  * @Author : lsy
  */
 @Entity
 @Table(name = "restaurantInfo")
-public class RestaurantInfo implements Serializable {
+public class RestaurantServerInfo implements Serializable {
 
     @Id
     int id;
 
-    String fileName;
     boolean IsVacation;
 
-    public RestaurantInfo() {}
+    public RestaurantServerInfo() {}
 
-    public RestaurantInfo(int id, String fileName, boolean isVacation) {
+    public RestaurantServerInfo(int id, boolean isVacation) {
         this.id = id;
-        this.fileName = fileName;
         IsVacation = isVacation;
     }
 
@@ -35,14 +33,6 @@ public class RestaurantInfo implements Serializable {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public String getFileName() {
-        return fileName;
-    }
-
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
     }
 
     public boolean isVacation() {
