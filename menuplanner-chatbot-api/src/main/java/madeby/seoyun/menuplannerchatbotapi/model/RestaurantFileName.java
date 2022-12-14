@@ -12,7 +12,7 @@ import java.io.Serializable;
  * @Author : lsy
  */
 @Entity
-@Table(name = "fileName")
+@Table(name = "restaurantFileName")
 public class RestaurantFileName implements Serializable {
     @Id
     int id;
