@@ -1,6 +1,6 @@
 package madeby.seoyun.menuplannerchatbotapi.repository;
 
-import madeby.seoyun.menuplannerchatbotapi.model.RestaurantServerInfo;
+import madeby.seoyun.menuplannerchatbotapi.model.ServerInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -11,5 +11,5 @@ import org.springframework.stereotype.Repository;
  * @Author : lsy
  */
 @Repository
-public interface RestaurantServerInfoRepository extends JpaRepository<madeby.seoyun.menuplannerchatbotapi.model.RestaurantServerInfo, Integer> {
+public interface ServerInfoRepository extends JpaRepository<ServerInfo, Integer> {
 }

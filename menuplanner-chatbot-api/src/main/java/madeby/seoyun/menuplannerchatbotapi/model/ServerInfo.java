@@ -13,16 +13,16 @@ import java.io.Serializable;
  */
 @Entity
 @Table(name = "restaurantInfo")
-public class RestaurantServerInfo implements Serializable {
+public class ServerInfo implements Serializable {
 
     @Id
     int id;
 
     boolean IsVacation;
 
-    public RestaurantServerInfo() {}
+    public ServerInfo() {}
 
-    public RestaurantServerInfo(int id, boolean isVacation) {
+    public ServerInfo(int id, boolean isVacation) {
         this.id = id;
         IsVacation = isVacation;
     }
