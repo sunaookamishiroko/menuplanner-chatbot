@@ -8,11 +8,11 @@ import java.io.Serializable;
 /**
  * 각각 식당들의 메뉴 파일 이름에 대한 DB 스키마 정의
  *
- * @filename : RestaurantInfo.java
+ * @filename : RestaurantFileName.java
  * @Author : lsy
  */
 @Entity
-@Table(name = "restaurantFileName")
+@Table(name = "fileName")
 public class RestaurantFileName implements Serializable {
     @Id
     int id;

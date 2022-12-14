@@ -4,6 +4,12 @@ import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
 
+/**
+ * 각각 식당들의 메뉴 DB 스키마 정의
+ *
+ * @filename : RestaurantMenu.java
+ * @Author : lsy
+ */
 @Entity
 @Table(name = "restaurantMenu")
 public class RestaurantMenu {

@@ -6,13 +6,13 @@ import javax.persistence.Table;
 import java.io.Serializable;
 
 /**
- * 각각 식당들의 정보에 대한 DB 스키마 정의
+ * 서버 운영에 필요한 정보들에 대한 DB 스키마 정의
  *
- * @filename : RestaurantInfo.java
+ * @filename : ServerInfo.java
  * @Author : lsy
  */
 @Entity
-@Table(name = "restaurantInfo")
+@Table(name = "serverInfo")
 public class ServerInfo implements Serializable {
 
     @Id

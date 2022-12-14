@@ -7,7 +7,7 @@ import javax.persistence.*;
 /**
  * 각각 식당들의 운영 시간, 가격 DB 스키마 정의
  *
- * @filename : FileName.java
+ * @filename : RestaurantProperty.java
  * @Author : lsy
  */
 @Entity
