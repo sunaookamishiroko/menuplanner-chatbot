@@ -1,8 +1,7 @@
 package madeby.seoyun.menuplannerchatbotapi.component;
 
-import madeby.seoyun.menuplannerchatbotapi.repository.EblockMenuRepository;
-import madeby.seoyun.menuplannerchatbotapi.repository.FileNameRepository;
-import madeby.seoyun.menuplannerchatbotapi.repository.TipMenuRepository;
+import madeby.seoyun.menuplannerchatbotapi.repository.RestaurantInfoRepository;
+import madeby.seoyun.menuplannerchatbotapi.repository.RestaurantMenuRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -16,11 +15,9 @@ import java.util.Calendar;
 class ParsingMenuTest {
 
     @Autowired
-    private TipMenuRepository tipMenuRepository;
+    private RestaurantMenuRepository restaurantMenuRepository;
     @Autowired
-    private EblockMenuRepository eblockMenuRepository;
-    @Autowired
-    private FileNameRepository fileNameRepository;
+    private RestaurantInfoRepository restaurantInfoRepository;
     @SpyBean
     private ParsingMenu parsingMenu;
 
@@ -47,13 +44,13 @@ class ParsingMenuTest {
         String[] arr = getDays(5);
         parsingMenu.getDataAndSaveToDatabaseEblock();
 
-        System.out.println("파일 이름 : " + fileNameRepository.findByName("0").getFileName());
+        System.out.println("파일 이름 : " + restaurantInfoRepository.findById(0).orElseThrow().getFileName());
         for (String date : arr) {
             System.out.println("날짜 : " + date);
             System.out.println("점심 ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ");
-            System.out.println(eblockMenuRepository.findByDate(date).getLunch());
+            System.out.println(restaurantMenuRepository.findByRestaurantPropertyIdAndDate(0, date).getLunch());
             System.out.println("저녁 ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ");
-            System.out.println(eblockMenuRepository.findByDate(date).getDinner());
+            System.out.println(restaurantMenuRepository.findByRestaurantPropertyIdAndDate(0, date).getDinner());
             System.out.println();
         }
     }
@@ -66,15 +63,15 @@ class ParsingMenuTest {
         }
         parsingMenu.getDataAndSaveToDatabaseTip();
 
-        System.out.println("파일 이름 : " + fileNameRepository.findByName("1").getFileName());
+        System.out.println("파일 이름 : " + restaurantInfoRepository.findById(1).orElseThrow().getFileName());
         for (String date : arr) {
             System.out.println("날짜 : " + date);
             System.out.println("아침 ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ");
-            System.out.println(tipMenuRepository.findByDate(date).getBreakFast());
+            System.out.println(restaurantMenuRepository.findByRestaurantPropertyIdAndDate(1, date).getBreakFast());
             System.out.println("점심 ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ");
-            System.out.println(tipMenuRepository.findByDate(date).getLunch());
+            System.out.println(restaurantMenuRepository.findByRestaurantPropertyIdAndDate(1, date).getLunch());
             System.out.println("저녁 ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ");
-            System.out.println(tipMenuRepository.findByDate(date).getDinner());
+            System.out.println(restaurantMenuRepository.findByRestaurantPropertyIdAndDate(1, date).getDinner());
             System.out.println();
         }
 
