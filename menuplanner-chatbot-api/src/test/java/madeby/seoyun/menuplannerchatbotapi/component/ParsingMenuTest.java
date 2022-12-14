@@ -1,6 +1,6 @@
 package madeby.seoyun.menuplannerchatbotapi.component;
 
-import madeby.seoyun.menuplannerchatbotapi.repository.RestaurantInfoRepository;
+import madeby.seoyun.menuplannerchatbotapi.repository.RestaurantFileNameRepository;
 import madeby.seoyun.menuplannerchatbotapi.repository.RestaurantMenuRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,7 @@ class ParsingMenuTest {
     @Autowired
     private RestaurantMenuRepository restaurantMenuRepository;
     @Autowired
-    private RestaurantInfoRepository restaurantInfoRepository;
+    private RestaurantFileNameRepository restaurantFileNameRepository;
     @SpyBean
     private ParsingMenu parsingMenu;
 
@@ -44,7 +44,7 @@ class ParsingMenuTest {
         String[] arr = getDays(5);
         parsingMenu.getDataAndSaveToDatabaseEblock();
 
-        System.out.println("파일 이름 : " + restaurantInfoRepository.findById(0).orElseThrow().getFileName());
+        System.out.println("파일 이름 : " + restaurantFileNameRepository.findById(0).orElseThrow().getFileName());
         for (String date : arr) {
             System.out.println("날짜 : " + date);
             System.out.println("점심 ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ");
@@ -63,7 +63,7 @@ class ParsingMenuTest {
         }
         parsingMenu.getDataAndSaveToDatabaseTip();
 
-        System.out.println("파일 이름 : " + restaurantInfoRepository.findById(1).orElseThrow().getFileName());
+        System.out.println("파일 이름 : " + restaurantFileNameRepository.findById(1).orElseThrow().getFileName());
         for (String date : arr) {
             System.out.println("날짜 : " + date);
             System.out.println("아침 ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ");
