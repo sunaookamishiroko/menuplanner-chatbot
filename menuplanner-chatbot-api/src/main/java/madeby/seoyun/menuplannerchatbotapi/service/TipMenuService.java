@@ -3,8 +3,8 @@ package madeby.seoyun.menuplannerchatbotapi.service;
 import madeby.seoyun.menuplannerchatbotapi.component.GetDateTime;
 import madeby.seoyun.menuplannerchatbotapi.component.ParsingMenu;
 import madeby.seoyun.menuplannerchatbotapi.exceptions.DatabaseConnectFailedException;
-import madeby.seoyun.menuplannerchatbotapi.model.TipMenu;
-import madeby.seoyun.menuplannerchatbotapi.repository.TipMenuRepository;
+import madeby.seoyun.menuplannerchatbotapi.model.RestaurantMenu;
+import madeby.seoyun.menuplannerchatbotapi.repository.RestaurantMenuRepository;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +19,11 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 public class TipMenuService {
-    private final TipMenuRepository repository;
+    private final RestaurantMenuRepository repository;
     private final ParsingMenu parsingMenu;
 
     @Autowired
-    public TipMenuService(TipMenuRepository repository, ParsingMenu parsingMenu) {
+    public TipMenuService(RestaurantMenuRepository repository, ParsingMenu parsingMenu) {
         this.repository = repository;
         this.parsingMenu = parsingMenu;
     }
@@ -36,6 +36,8 @@ public class TipMenuService {
      * @ return String : 카카오 챗봇 메시지 형식 json 문자열
      */
     public String makeMenuJson() {
+        RestaurantMenu menu = getTodayTipMenu();
+
         JSONObject json = new JSONObject();
         json.put("version", "2.0");
 
@@ -51,7 +53,7 @@ public class TipMenuService {
         JSONObject itemCard = new JSONObject();
         noNamed.put("itemCard", itemCard);
 
-        itemCard.put("title", getTodayTipMenu());
+        itemCard.put("title", getMenuStr(menu));
         itemCard.put("description", "");
         itemCard.put("head", "오늘(" + GetDateTime.getDate() + " " + GetDateTime.getDayOfWeek() + ") 메뉴");
 
@@ -60,36 +62,23 @@ public class TipMenuService {
 
         JSONObject breakFastTime = new JSONObject();
         breakFastTime.put("title", "조식 시간");
-
-        if(parsingMenu.checkVacation())
-            breakFastTime.put("description", "08:30 - 09:30");
-        else
-            breakFastTime.put("description", "09:30 - 11:00");
+        breakFastTime.put("description", menu.getRestaurantProperty().getBreakFastTime());
 
         JSONObject lunchTime = new JSONObject();
         lunchTime.put("title", "중식 시간");
-
-        if(parsingMenu.checkVacation())
-            lunchTime.put("description", "11:30 - 14:00");
-        else
-            lunchTime.put("description", "11:30 - 14:30");
-
+        lunchTime.put("description", menu.getRestaurantProperty().getLunchTime());
 
         JSONObject dinnerTime = new JSONObject();
         dinnerTime.put("title", "석식 시간");
-
-        if(parsingMenu.checkVacation())
-            dinnerTime.put("description", "17:30 - 18:30");
-        else
-            dinnerTime.put("description", "17:00 - 18:50");
+        dinnerTime.put("description", menu.getRestaurantProperty().getDinnerTime());
 
         JSONObject breakFastPrice = new JSONObject();
         breakFastPrice.put("title", "셀프라면 가격");
-        breakFastPrice.put("description", "3000원");
+        breakFastPrice.put("description", menu.getRestaurantProperty().getBreakFastPrice());
 
         JSONObject lunchDinnerPrice = new JSONObject();
         lunchDinnerPrice.put("title", "중식/석식 가격");
-        lunchDinnerPrice.put("description", "6000원");
+        lunchDinnerPrice.put("description", menu.getRestaurantProperty().getCommonPrice());
 
         itemList.add(breakFastTime);
         itemList.add(lunchTime);
@@ -106,7 +95,7 @@ public class TipMenuService {
         buttons.add(buttonsInfo);
         buttonsInfo.put("label", "식단표 모두 보기");
         buttonsInfo.put("action", "webLink");
-        buttonsInfo.put("webLinkUrl", "https://ibook.kpu.ac.kr/Viewer/menu02");
+        buttonsInfo.put("webLinkUrl", menu.getRestaurantProperty().getMenuUrl());
 
         itemCard.put("buttonLayout", "vertical");
 
@@ -120,30 +109,32 @@ public class TipMenuService {
      * @ return String menu : 메뉴 정보를 합친 문자열
      */
     @Transactional(readOnly = true)
-    public String getTodayTipMenu() {
+    public RestaurantMenu getTodayTipMenu() {
         String today = GetDateTime.getDate();
-        TipMenu tipMenu;
+        RestaurantMenu menu;
 
         try {
-            tipMenu = repository.findByDate(today);
+            menu = repository.findByRestaurantPropertyIdAndDate(1, today);
         } catch (Exception e) {
             throw new DatabaseConnectFailedException("서버의 응답이 없습니다. 개발자에게 문의해주세요! code:1");
         }
 
+        return menu;
+    }
+
+    public String getMenuStr(RestaurantMenu menu) {
         String breakFast = "미운영";
         String lunch = "미운영";
         String dinner = "미운영";
 
-        if (tipMenu != null) {
-            breakFast = tipMenu.getBreakFast();
-            lunch = tipMenu.getLunch();
-            dinner = tipMenu.getDinner();
+        if (menu != null) {
+            breakFast = menu.getBreakFast();
+            lunch = menu.getLunch();
+            dinner = menu.getDinner();
         }
 
-        String menu = "조식 ▼\n\n" + breakFast +
+        return "조식 ▼\n\n" + breakFast +
                 "\n\n중식 ▼\n\n" + lunch +
                 "\n\n석식 ▼\n\n" + dinner;
-
-        return menu;
     }
 }

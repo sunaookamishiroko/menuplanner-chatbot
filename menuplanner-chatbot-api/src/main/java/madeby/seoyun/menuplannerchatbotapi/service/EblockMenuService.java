@@ -2,8 +2,8 @@ package madeby.seoyun.menuplannerchatbotapi.service;
 
 import madeby.seoyun.menuplannerchatbotapi.component.GetDateTime;
 import madeby.seoyun.menuplannerchatbotapi.exceptions.DatabaseConnectFailedException;
-import madeby.seoyun.menuplannerchatbotapi.model.EblockMenu;
-import madeby.seoyun.menuplannerchatbotapi.repository.EblockMenuRepository;
+import madeby.seoyun.menuplannerchatbotapi.model.RestaurantMenu;
+import madeby.seoyun.menuplannerchatbotapi.repository.RestaurantMenuRepository;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +18,10 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 public class EblockMenuService {
-    private final EblockMenuRepository repository;
+    private final RestaurantMenuRepository repository;
 
     @Autowired
-    public EblockMenuService(EblockMenuRepository repository) {
+    public EblockMenuService(RestaurantMenuRepository repository) {
         this.repository = repository;
     }
 
@@ -33,6 +33,8 @@ public class EblockMenuService {
      * @ return String : 카카오 챗봇 메시지 형식 json 문자열
      */
     public String makeMenuJson() {
+        RestaurantMenu menu = getTodayEblockMenu();
+
         JSONObject json = new JSONObject();
         json.put("version", "2.0");
 
@@ -48,7 +50,7 @@ public class EblockMenuService {
         JSONObject itemCard = new JSONObject();
         noNamed.put("itemCard", itemCard);
 
-        itemCard.put("title", getTodayEblockMenu());
+        itemCard.put("title", getMenuStr(menu));
         itemCard.put("description", "");
         itemCard.put("head", "오늘(" + GetDateTime.getDate() + " " + GetDateTime.getDayOfWeek() + ") 메뉴");
 
@@ -57,15 +59,15 @@ public class EblockMenuService {
 
         JSONObject lunchTime = new JSONObject();
         lunchTime.put("title", "중식 시간");
-        lunchTime.put("description", "11:30 - 13:50");
+        lunchTime.put("description", menu.getRestaurantProperty().getLunchTime());
 
         JSONObject dinnerTime = new JSONObject();
         dinnerTime.put("title", "석식 시간");
-        dinnerTime.put("description", "16:50 - 18:40");
+        dinnerTime.put("description", menu.getRestaurantProperty().getDinnerTime());
 
         JSONObject price = new JSONObject();
         price.put("title", "가격");
-        price.put("description", "6500원");
+        price.put("description", menu.getRestaurantProperty().getCommonPrice());
 
         itemList.add(lunchTime);
         itemList.add(dinnerTime);
@@ -80,11 +82,11 @@ public class EblockMenuService {
         buttons.add(buttonsInfo);
         buttonsInfo.put("label", "식단표 모두 보기");
         buttonsInfo.put("action", "webLink");
-        buttonsInfo.put("webLinkUrl", "https://ibook.kpu.ac.kr/Viewer/menu01");
+        buttonsInfo.put("webLinkUrl", menu.getRestaurantProperty().getMenuUrl());
 
         itemCard.put("buttonLayout", "vertical");
 
-        return json.toJSONString().replace("\\/", "/") ;
+        return json.toJSONString().replace("\\/", "/");
     }
 
     /**
@@ -94,26 +96,29 @@ public class EblockMenuService {
      * @ return String : 메뉴 정보를 합친 문자열
      */
     @Transactional(readOnly = true)
-    public String getTodayEblockMenu() {
+    public RestaurantMenu getTodayEblockMenu() {
         String today = GetDateTime.getDate();
-        EblockMenu eblockMenu;
+        RestaurantMenu menu;
 
         try {
-            eblockMenu = repository.findByDate(today);
+            menu = repository.findByRestaurantPropertyIdAndDate(0, today);
         } catch (Exception e) {
             throw new DatabaseConnectFailedException("서버의 응답이 없습니다. 개발자에게 문의해주세요! code:1");
         }
 
+        return menu;
+    }
+
+    public String getMenuStr(RestaurantMenu menu) {
         String lunch = "미운영";
         String dinner = "미운영";
 
-        if (eblockMenu != null) {
-            lunch = eblockMenu.getLunch();
-            dinner = eblockMenu.getDinner();
+        if (menu != null) {
+            lunch = menu.getLunch();
+            dinner = menu.getDinner();
         }
-        String menu = "\n\n중식 ▼\n\n" + lunch +
-                "\n\n석식 ▼\n\n" + dinner;
 
-        return menu;
+        return "\n\n중식 ▼\n\n" + lunch +
+                "\n\n석식 ▼\n\n" + dinner;
     }
 }
