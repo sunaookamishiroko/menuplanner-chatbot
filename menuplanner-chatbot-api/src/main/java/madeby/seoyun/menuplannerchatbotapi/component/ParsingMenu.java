@@ -4,12 +4,11 @@ import madeby.seoyun.menuplannerchatbotapi.exceptions.ParsingDataFailedException
 import madeby.seoyun.menuplannerchatbotapi.model.*;
 import madeby.seoyun.menuplannerchatbotapi.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,25 +25,27 @@ public class ParsingMenu {
     private final RestaurantMenuRepository restaurantMenuRepository;
     private final RestaurantPropertyRepository restaurantPropertyRepository;
     private final RestaurantFileNameRepository restaurantFileNameRepository;
+
+    private final WebClient webClient;
+
     private final SettingProperty settingProperty;
-    private final RestTemplate restTemplate;
 
     private boolean isParsingNowEblock = false;
     private boolean isParsingNowTIP = false;
     private boolean isBeforeParsingEblock = false;
     private boolean isBeforeParsingTIP = false;
 
-    @Value("${parsing-endpoint}")
-    private String endPoint;
-
     @Autowired
-    public ParsingMenu(RestaurantFileNameRepository restaurantFileNameRepository, RestaurantMenuRepository restaurantMenuRepository,
-                       RestaurantPropertyRepository restaurantPropertyRepository, SettingProperty settingProperty) {
+    public ParsingMenu(RestaurantFileNameRepository restaurantFileNameRepository,
+                       RestaurantMenuRepository restaurantMenuRepository,
+                       RestaurantPropertyRepository restaurantPropertyRepository,
+                       SettingProperty settingProperty,
+                       WebClient webClient) {
         this.restaurantMenuRepository = restaurantMenuRepository;
         this.restaurantPropertyRepository = restaurantPropertyRepository;
         this.restaurantFileNameRepository = restaurantFileNameRepository;
         this.settingProperty = settingProperty;
-        this.restTemplate = new RestTemplateBuilder().build();
+        this.webClient = webClient;
     }
 
     /**
@@ -151,7 +152,7 @@ public class ParsingMenu {
 
         saveEblockFileName(eBlockFileName);
 
-        HashMap<String, HashMap<String, String>> eBlockMenu =
+        Map<String, HashMap<String, String>> eBlockMenu =
                 getEblockMenu(eBlockFileName, eBlockBookCode);
         String[] eBlockMenuKeys = new String[eBlockMenu.keySet().size()];
         eBlockMenuKeys = eBlockMenu.keySet().toArray(eBlockMenuKeys);
@@ -180,7 +181,7 @@ public class ParsingMenu {
 
         saveTipFileName(tipFileName);
 
-        HashMap<String, HashMap<String, String>> tipMenu =
+        Map<String, HashMap<String, String>> tipMenu =
                 getTipMenu(tipFileName, tipBookCode);
         String[] tipMenuKeys = new String[tipMenu.keySet().size()];
         tipMenuKeys = tipMenu.keySet().toArray(tipMenuKeys);
@@ -243,24 +244,29 @@ public class ParsingMenu {
      * @ return Map<String, String> temp : json 형식의 데이터를 map으로 받아서 반환
      * @ exception ParsingDataFailedException : 파싱에 실패할 경우 발생
      */
-    private HashMap<String, String> getFileInfo(int num) {
+    private Map<String, String> getFileInfo(int num) {
         if(num == 0)
             LogData.printLog("E동 메뉴 파일 이름 파싱중...", "getFileName");
         else if(num == 1)
             LogData.printLog("TIP 메뉴 파일 이름 파싱중...", "getFileName");
 
-        String url = endPoint + "/fileinfo?classify=" + num;
-
-        HashMap<String, String> temp;
-
+        Map<String, String> res;
         try {
-            temp = this.restTemplate.getForObject(url, HashMap.class);
+            res = webClient.get()
+                    .uri(uriBuilder ->
+                            uriBuilder.path("/fileinfo")
+                                    .queryParam("classify", num)
+                                    .build()
+                    ).retrieve()
+                    .bodyToMono(new ParameterizedTypeReference<HashMap<String, String>>() {
+                    })
+                    .block();
         } catch(Exception e) {
             throw new ParsingDataFailedException(e.getMessage() + " : " + "getFileInfo");
         }
 
         LogData.printLog("파싱 완료", "getFileInfo");
-        return temp;
+        return res;
     }
 
     /**
@@ -272,25 +278,34 @@ public class ParsingMenu {
      * @ exception ParsingDataFailedException : 파싱에 실패할 경우 발생
      * @return
      */
-    private HashMap<String, HashMap<String, String>> getEblockMenu(String fileName, String eBlockBookCode) {
+    private Map<String, HashMap<String, String>> getEblockMenu(String fileName, String eBlockBookCode) {
         LogData.printLog("E동 메뉴 파싱중...", "getEblockMenu");
 
         String url;
         if (settingProperty.checkIsVacation(0))
-            url = endPoint + "/veblock?filename=" + fileName + "&bookcode=" + eBlockBookCode;
+            url = "/veblock";
         else
-            url = endPoint + "/eblock?filename=" + fileName + "&bookcode=" + eBlockBookCode;
+            url = "/eblock";
 
-        HashMap<String, HashMap<String, String>> temp;
+        Map<String, HashMap<String, String>> res;
 
         try {
-            temp = this.restTemplate.getForObject(url, HashMap.class);
+            res = webClient.get()
+                    .uri(uriBuilder ->
+                            uriBuilder.path(url)
+                                    .queryParam("filename", fileName)
+                                    .queryParam("bookcode", eBlockBookCode)
+                                    .build()
+                    ).retrieve()
+                    .bodyToMono(new ParameterizedTypeReference<HashMap<String, HashMap<String, String>>>() {
+                    })
+                    .block();
         } catch(Exception e) {
             throw new ParsingDataFailedException(e.getMessage() + " : " + "getEblockMenu");
         }
 
         LogData.printLog("파싱 완료", "getEblockMenu");
-        return temp;
+        return res;
     }
 
     /**
@@ -301,20 +316,27 @@ public class ParsingMenu {
      * @ return Map<String, Map<String, String>> temp : json 형식의 데이터를 map으로 받아서 반환
      * @ exception ParsingDataFailedException : 파싱에 실패할 경우 발생
      */
-    private HashMap<String, HashMap<String, String>> getTipMenu(String fileName, String tipBookCode) {
+    private Map<String, HashMap<String, String>> getTipMenu(String fileName, String tipBookCode) {
         LogData.printLog("TIP 메뉴 파싱중...", "getTipMenu");
 
-        String url = endPoint + "/tip?filename=" + fileName + "&bookcode=" + tipBookCode;
-        HashMap<String, HashMap<String, String>> temp;
-
+        HashMap<String, HashMap<String, String>> res;
         try {
-            temp = this.restTemplate.getForObject(url, HashMap.class);
+            res = webClient.get()
+                    .uri(uriBuilder ->
+                            uriBuilder.path("/tip")
+                                    .queryParam("filename", fileName)
+                                    .queryParam("bookcode", tipBookCode)
+                                    .build()
+                    ).retrieve()
+                    .bodyToMono(new ParameterizedTypeReference<HashMap<String, HashMap<String, String>>>() {
+                    })
+                    .block();
         } catch(Exception e) {
-            throw new ParsingDataFailedException(e.getMessage() + " : " + "getTipMenu");
+            throw new ParsingDataFailedException(e.getMessage() + " : " + "getEblockMenu");
         }
 
         LogData.printLog("파싱 완료", "getTipMenu");
-        return temp;
+        return res;
     }
 
     /**
