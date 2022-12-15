@@ -12,6 +12,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * 파일 이름 파싱, 메뉴 파싱을 요청하여 DB에 저장하기 위한 컴포넌트
@@ -49,6 +50,52 @@ public class ParsingMenu {
     }
 
     /**
+     * E동 메뉴 파일 이름과 tip 지하 식당 메뉴 파일 이름이 모두 DB에 존재하는지 판단한다.
+     *
+     * @ param : 없음
+     * @ return boolean : 두 개의 파일 이름이 DB에 모두 존재하면 true, 아니라면 false
+     */
+    @Transactional(readOnly = true)
+    public boolean isDatabaseDataExist() {
+        LogData.printLog("DB에 파일 이름 존재하는지 확인...", "isDatabaseDataExist");
+
+        if (restaurantFileNameRepository.findById(0).isPresent()
+                && restaurantFileNameRepository.findById(1).isPresent()) {
+            LogData.printLog("파일 이름이 존재합니다", "isDatabaseDataExist");
+            return true;
+        } else {
+            LogData.printLog("파일 이름이 존재하지 않습니다", "isDatabaseDataExist");
+            return false;
+        }
+    }
+
+    /**
+     * E동 메뉴 파일 이름과 tip 지하 식당 메뉴 파일 이름을 파싱하여
+     * 두 개의 데이터가 파일 이름 DB에 저장되어있는 데이터와 다른지 판단한다.
+     * 같다면 최신 데이터이고 아니라면 최신 데이터가 아니다.
+     *
+     * @ param : 없음
+     * @ return boolean : 두 개의 파일 이름이 DB에 있는 것과 모두 같으면 true, 아니라면 false
+     */
+    @Transactional(readOnly = true)
+    public boolean isRecentData() {
+        LogData.printLog("최신 데이터인지 확인...", "isRecentData");
+
+        String eBlockFileName = getFileInfo(0).get("fileName");
+        String tipFileName = getFileInfo(1).get("fileName");
+
+
+        if (eBlockFileName.equals(restaurantFileNameRepository.getById(0).getFileName())
+                && tipFileName.equals(restaurantFileNameRepository.getById(1).getFileName())) {
+            LogData.printLog("최신 데이터입니다", "isRecentData");
+            return true;
+        } else {
+            LogData.printLog("최신 데이터가 아닙니다", "isRecentData");
+            return false;
+        }
+    }
+
+    /**
      * 월요일 0시 0분 0초가 되면, isBeforeParsingEblock, isBeforeParsingTIP 시그널을 true로 바꾼다.
      * 이 시그널은 컨트롤러가 식당으로부터 메뉴가 올라올 때까지 기다려달라는 json을 보내게 한다.
      *
@@ -73,11 +120,13 @@ public class ParsingMenu {
      * @ exception : 쓰레드가 오작동하면 exception 발생
      */
     @Scheduled(cron = "0 0 7 * * 1")
+    @Transactional(rollbackFor = Exception.class)
     public void checkUploadMenu() throws Exception{
         LogData.printLog("메뉴 파일 업로드 체크를 시작합니다...", "checkUploadMenu");
 
-        String eBlockFileName = restaurantFileNameRepository.findById(0).orElseThrow().getFileName();
-        String tipFileName = restaurantFileNameRepository.findById(1).orElseThrow().getFileName();
+        // null이어도 진행. 상관 없음
+        String eBlockFileName = restaurantFileNameRepository.findById(0).get().getFileName();
+        String tipFileName = restaurantFileNameRepository.findById(1).get().getFileName();
 
         boolean isEblockUploaded = false;
         boolean isTipUploaded = false;
@@ -127,6 +176,7 @@ public class ParsingMenu {
      * @ param : 없음
      * @ return : 없음
      */
+    @Transactional(rollbackFor = Exception.class)
     public void getDataAndSaveToDatabase() {
         isParsingNowEblock = true;
         isParsingNowTIP = true;
@@ -193,51 +243,6 @@ public class ParsingMenu {
     }
 
     /**
-     * E동 메뉴 파일 이름과 tip 지하 식당 메뉴 파일 이름이 모두 DB에 존재하는지 판단한다.
-     *
-     * @ param : 없음
-     * @ return boolean : 두 개의 파일 이름이 DB에 모두 존재하면 true, 아니라면 false
-     */
-    @Transactional(readOnly = true)
-    public boolean isDatabaseDataExist() {
-        LogData.printLog("DB에 파일 이름 존재하는지 확인...", "isDatabaseDataExist");
-
-        if (restaurantFileNameRepository.findById(0).isPresent()
-                && restaurantFileNameRepository.findById(1).isPresent()) {
-            LogData.printLog("파일 이름이 존재합니다", "isDatabaseDataExist");
-            return true;
-        } else {
-            LogData.printLog("파일 이름이 존재하지 않습니다", "isDatabaseDataExist");
-            return false;
-        }
-    }
-
-    /**
-     * E동 메뉴 파일 이름과 tip 지하 식당 메뉴 파일 이름을 파싱하여
-     * 두 개의 데이터가 파일 이름 DB에 저장되어있는 데이터와 다른지 판단한다.
-     * 같다면 최신 데이터이고 아니라면 최신 데이터가 아니다.
-     *
-     * @ param : 없음
-     * @ return boolean : 두 개의 파일 이름이 DB에 있는 것과 모두 같으면 true, 아니라면 false
-     */
-    @Transactional(readOnly = true)
-    public boolean isRecentData() {
-        LogData.printLog("최신 데이터인지 확인...", "isRecentData");
-
-        String eBlockFileName = getFileInfo(0).get("fileName");
-        String tipFileName = getFileInfo(1).get("fileName");
-
-        if (eBlockFileName.equals(restaurantFileNameRepository.findById(0).orElseThrow().getFileName())
-                && tipFileName.equals(restaurantFileNameRepository.findById(1).orElseThrow().getFileName())) {
-            LogData.printLog("최신 데이터입니다", "isRecentData");
-            return true;
-        } else {
-            LogData.printLog("최신 데이터가 아닙니다", "isRecentData");
-            return false;
-        }
-    }
-
-    /**
      * aws lambda api를 이용하여 파일 이름을 파싱한다.
      *
      * @ param String num : "0" -> E동 메뉴 파일 이름 파싱 | "1" -> TIP 메뉴 파일 이름 파싱
@@ -276,7 +281,6 @@ public class ParsingMenu {
      * @ param String eBlockBookCode : E동 식당 메뉴 사이트에서 파일 다운받기 위한 bookcode
      * @ return Map<String, Map<String, String>> temp : json 형식의 데이터를 map으로 받아서 반환
      * @ exception ParsingDataFailedException : 파싱에 실패할 경우 발생
-     * @return
      */
     private Map<String, HashMap<String, String>> getEblockMenu(String fileName, String eBlockBookCode) {
         LogData.printLog("E동 메뉴 파싱중...", "getEblockMenu");
@@ -407,7 +411,13 @@ public class ParsingMenu {
     public void saveEblockFileName(String eBlockFileName) {
         LogData.printLog("E동 파일 이름 DB에 저장중...", "saveEblockFileName");
 
-        restaurantFileNameRepository.save(new RestaurantFileName(0, eBlockFileName));
+        Optional<RestaurantFileName> optional = restaurantFileNameRepository.findById(0);
+
+        if(optional.isPresent()) {
+            optional.get().setFileName(eBlockFileName);
+        } else {
+            restaurantFileNameRepository.save(new RestaurantFileName(0, eBlockFileName));
+        }
 
         LogData.printLog("저장 완료", "saveEblockFileName");
     }
@@ -422,7 +432,13 @@ public class ParsingMenu {
     public void saveTipFileName(String tipFileName) {
         LogData.printLog("TIP 파일 이름 DB에 저장중...", "saveTipFileName");
 
-        restaurantFileNameRepository.save(new RestaurantFileName(1, tipFileName));
+        Optional<RestaurantFileName> optional = restaurantFileNameRepository.findById(1);
+
+        if(optional.isPresent()) {
+            optional.get().setFileName(tipFileName);
+        } else {
+            restaurantFileNameRepository.save(new RestaurantFileName(1, tipFileName));
+        }
 
         LogData.printLog("저장 완료", "saveTipFileName");
     }
