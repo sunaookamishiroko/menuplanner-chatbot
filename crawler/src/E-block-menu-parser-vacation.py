@@ -3,6 +3,8 @@ import pandas as pd
 import requests
 from urllib import parse
 
+import datetime
+
 
 def lambda_handler(event, context):
     # 파일 이름 파싱
