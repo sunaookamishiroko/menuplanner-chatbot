@@ -3,6 +3,7 @@ import pandas as pd
 import requests
 from urllib import parse
 
+import datetime
 
 def lambda_handler(event, context):
     # 파일 이름 파싱
@@ -58,6 +59,15 @@ def lambda_handler(event, context):
     menu = {}
     month = ''
 
+    # 이번 주 월, 일을 가져 온다.
+    week = []
+    today = datetime.date.today()
+    today = today - datetime.timedelta(days=today.weekday())
+
+    for i in range(7):
+        week.append(today.month.__str__() + '월 ' + today.day.__str__() + '일')
+        today = today + datetime.timedelta(days=1)
+
     # month와 menuIndex를 찾는 과정
     for i in range(len(df.columns)):
         for j in range(len(df.index)):
@@ -112,6 +122,11 @@ def lambda_handler(event, context):
             tempdict["lunch"] = '\n'.join(s for s in tempdict["lunch"])
             tempdict["dinner"] = '\n'.join(s for s in tempdict["dinner"])
         menu[day] = tempdict
+
+    # 없는 날짜 수 만큼 미운영 추가
+    tempdict = {"lunch": "미운영", "dinner": "미운영"}
+    for i in range(len(menu.keys()), len(week)):
+        menu[week[i]] = tempdict
 
     return {
         'statusCode': 200,
