@@ -123,10 +123,6 @@ public class SettingProperty {
      */
     @Transactional(readOnly = true)
     public boolean checkIsVacation(int id) {
-        if(serverInfoRepository.findById(id).orElseThrow().isVacation()) {
-            return true;
-        } else {
-            return false;
-        }
+        return serverInfoRepository.findById(id).orElseThrow().isVacation();
     }
 }
