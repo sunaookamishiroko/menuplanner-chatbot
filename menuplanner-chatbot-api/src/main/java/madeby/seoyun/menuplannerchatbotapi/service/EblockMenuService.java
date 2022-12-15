@@ -116,15 +116,7 @@ public class EblockMenuService {
      * @ return String : 메뉴 문자열
      */
     public String getMenuStr(RestaurantMenu menu) {
-        String lunch = "미운영";
-        String dinner = "미운영";
-
-        if (menu != null) {
-            lunch = menu.getLunch();
-            dinner = menu.getDinner();
-        }
-
-        return "\n\n중식 ▼\n\n" + lunch +
-                "\n\n석식 ▼\n\n" + dinner;
+        return "\n\n중식 ▼\n\n" + menu.getLunch() +
+                "\n\n석식 ▼\n\n" + menu.getDinner();
     }
 }
