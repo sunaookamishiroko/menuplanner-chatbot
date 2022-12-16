@@ -20,12 +20,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class TipMenuService {
     private final RestaurantMenuRepository repository;
-    private final ParsingMenu parsingMenu;
+    private final GetDateTime getDateTime;
 
     @Autowired
-    public TipMenuService(RestaurantMenuRepository repository, ParsingMenu parsingMenu) {
+    public TipMenuService(RestaurantMenuRepository repository, GetDateTime getDateTime) {
         this.repository = repository;
-        this.parsingMenu = parsingMenu;
+        this.getDateTime = getDateTime;
     }
 
     /**
@@ -55,7 +55,7 @@ public class TipMenuService {
 
         itemCard.put("title", getMenuStr(menu));
         itemCard.put("description", "");
-        itemCard.put("head", "오늘(" + GetDateTime.getDate() + " " + GetDateTime.getDayOfWeek() + ") 메뉴");
+        itemCard.put("head", "오늘(" + getDateTime.getDate() + " " + getDateTime.getDayOfWeek() + ") 메뉴");
 
         JSONArray itemList = new JSONArray();
         itemCard.put("itemList", itemList);
@@ -110,7 +110,7 @@ public class TipMenuService {
      */
     @Transactional(readOnly = true)
     public RestaurantMenu getTodayTipMenu() {
-        String today = GetDateTime.getDate();
+        String today = getDateTime.getDate();
         RestaurantMenu menu;
 
         try {

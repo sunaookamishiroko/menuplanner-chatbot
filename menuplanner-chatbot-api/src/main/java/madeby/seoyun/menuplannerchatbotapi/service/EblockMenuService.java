@@ -19,10 +19,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class EblockMenuService {
     private final RestaurantMenuRepository repository;
+    private final GetDateTime getDateTime;
 
     @Autowired
-    public EblockMenuService(RestaurantMenuRepository repository) {
+    public EblockMenuService(RestaurantMenuRepository repository, GetDateTime getDateTime) {
         this.repository = repository;
+        this.getDateTime = getDateTime;
     }
 
     /**
@@ -52,7 +54,7 @@ public class EblockMenuService {
 
         itemCard.put("title", getMenuStr(menu));
         itemCard.put("description", "");
-        itemCard.put("head", "오늘(" + GetDateTime.getDate() + " " + GetDateTime.getDayOfWeek() + ") 메뉴");
+        itemCard.put("head", "오늘(" + getDateTime.getDate() + " " + getDateTime.getDayOfWeek() + ") 메뉴");
 
         JSONArray itemList = new JSONArray();
         itemCard.put("itemList", itemList);
@@ -97,7 +99,7 @@ public class EblockMenuService {
      */
     @Transactional(readOnly = true)
     public RestaurantMenu getTodayEblockMenu() {
-        String today = GetDateTime.getDate();
+        String today = getDateTime.getDate();
         RestaurantMenu menu;
 
         try {
