@@ -60,9 +60,6 @@ class ParsingMenuTest {
     @Test
     void getDataAndSaveToDatabaseTip() {
         String[] arr = getDays(6);
-        for(String s: arr) {
-            System.out.println(s);
-        }
         parsingMenu.getDataAndSaveToDatabaseTip();
 
         System.out.println("파일 이름 : " + restaurantFileNameRepository.findById(1).orElseThrow().getFileName());
