@@ -19,7 +19,7 @@
 ## Architecture
 
 <img src="./images/architecture.png">
-<img src="./images/database_architecture.png">
+<img src="./images/db_archiecture.png">
 
 ## Screenshot
 <div>
