@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+  server:
+    image: somewheregreeny/menuplanner-server:2.0.0
+    container_name: appserver-green
+
+    build: ./menuplanner-chatbot-api
+    ports:
+      - "8080:8080"
