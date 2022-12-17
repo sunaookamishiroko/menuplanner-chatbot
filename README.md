@@ -40,8 +40,8 @@
 
 - 자세한 설명은 디렉토리의 README를 참조해주세요.
 
-- [spring 서버](https://github.com/somewheregreeny/menuplanner-chatbot/tree/main/menuplanner-chatbot-api)
-- [aws lambda python](https://github.com/somewheregreeny/menuplanner-chatbot/tree/main/aws-rambda-python)
+- [spring 서버](https://github.com/sunaookamishiroko/menuplanner-chatbot/tree/main/server/menuplanner-chatbot-api)
+- [aws lambda python](https://github.com/somewheregreeny/menuplanner-chatbot/tree/main/crawler)
 
 ## 업데이트 예정
 
