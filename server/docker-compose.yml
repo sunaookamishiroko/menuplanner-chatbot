@@ -5,7 +5,7 @@ services:
     image: somewheregreeny/menuplanner-server:2.0.0
     container_name: appserver
 
-    build: ./menuplanner-chatbot-api
+    build: ./server/menuplanner-chatbot-api
     ports:
       - "8080:8080"
 
@@ -13,6 +13,6 @@ services:
     image: somewheregreeny/nginx:1.0.0
     container_name: webserver
 
-    build: ./nginx 
+    build: ./server/nginx 
     ports: 
       - "80:80"
