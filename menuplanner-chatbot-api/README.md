@@ -6,7 +6,49 @@ spring boot로 만든 REST api 서버입니다.
 
 ## Project structure
 
-<img height=900 src="/images/menuplanner-chatbot-api-structure.png">
+```
+madeby.seoyun.menuplannerchatbotapi
+    |
+    +- MenuplannerChatbotApplication.java
+    |
+    +- component
+    |   +- CommandApplicationRunner.java
+    |   +- GetDateTime.java
+    |   +- LogData.java
+    |   +- ParsingMenu.java
+    |   +- SettingProperty.java
+    |
+    +- config
+    |   +- ClockConfig.java
+    |   +- WebClientConfig.java
+    |
+    +- controller
+    |   +- EblockMenuController.java
+    |   +- TipMenuController.java
+    |
+    +- exceptions
+    |   +- CustomizedResponseEntityExceptionHandler.java
+    |   +- DatabaseConnectFailedException.java
+    |   +- ParsingDataFailedException.java
+    |   +- WrongCommandException.java
+    |
+    +- model
+    |   +- RestaurantFileName.java
+    |   +- RestaurantMenu.java
+    |   +- RestaurantProperty.java
+    |   +- ServerInfo.java
+    |
+    +- repository
+    |   +- RestaurantFileNameRepository.java
+    |   +- RestaurantMenuRepository.java
+    |   +- RestaurantPropertyRepository.java
+    |   +- ServerInfoRepository.java
+    |
+    +- service
+        +- DefaultMessageService.java
+        +- EblockMenuService.java
+        +- TipMenuService.java
+```
 
 ## How it works?
 
