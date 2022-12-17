@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+  server:
+    image: somewheregreeny/menuplanner-server:2.0.0
+    container_name: appserver
+
+    build: ./menuplanner-chatbot-api
+    ports:
+      - "8080:8080"
+
+  nginx:  
+    image: somewheregreeny/nginx:1.0.0
+    container_name: webserver
+
+    build: ./nginx 
+    ports: 
+      - "80:80"
