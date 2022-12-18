@@ -9,8 +9,8 @@ services:
     ports:
       - "8080:8080"
     networks:
-      - blue_deploy_network
+      - main_network
 
 networks:
-  blue_deploy_network:
+  main_network:
     external: true

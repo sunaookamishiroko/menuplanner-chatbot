@@ -27,4 +27,4 @@ services:
 
 networks:
   deploy_network:
-    external: false
+    name: main_network
