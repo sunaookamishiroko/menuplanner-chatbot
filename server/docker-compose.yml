@@ -3,11 +3,13 @@ version: '3'
 services:
   server:
     image: somewheregreeny/menuplanner-server:2.0.0
-    container_name: appserver-green
+    container_name: appserver-blue
 
     build: ./menuplanner-chatbot-api
     ports:
       - "8080:8080"
+    networks:
+      - deploy_network
 
   nginx:  
     image: somewheregreeny/nginx:1.0.0
@@ -16,3 +18,13 @@ services:
     build: ./nginx 
     ports: 
       - "80:80"
+    volumes:   # volume 설정
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    
+    networks:
+      - deploy_network
+
+networks:
+  deploy_network:
+    external: false
