@@ -3,6 +3,7 @@ package madeby.seoyun.menuplannerchatbotapi.model;
 import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 /**
  * 각각 식당들의 운영 시간, 가격 DB 스키마 정의
@@ -12,7 +13,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "restaurantProperty")
-public class RestaurantProperty {
+public class RestaurantProperty implements Serializable {
     @Id
     private int id;
 
@@ -98,4 +99,5 @@ public class RestaurantProperty {
     public void setMenuUrl(String menuUrl) {
         this.menuUrl = menuUrl;
     }
+
 }
