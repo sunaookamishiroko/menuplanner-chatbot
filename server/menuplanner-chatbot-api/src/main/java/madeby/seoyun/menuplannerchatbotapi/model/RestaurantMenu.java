@@ -26,7 +26,7 @@ public class RestaurantMenu implements Serializable {
     private String lunch;
     private String dinner;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "restaurantCode")
     private RestaurantProperty restaurantProperty;
 
