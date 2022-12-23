@@ -3,15 +3,17 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     password: rootroot
-    url: jdbc:mysql://127.0.0.1:3306/test2?useSSL=false&characterEncoding=UTF-8&serverTimezone=Asia/Seoul
+    url: jdbc:mysql://127.0.0.1:3306/test?useSSL=false&characterEncoding=UTF-8&serverTimezone=Asia/Seoul
     hikari:
       connection-timeout: 3500
 
   jpa:
     database: mysql
-    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    database-platform: org.hibernate.dialect.MySQL8Dialect
     generate-ddl: true
     show-sql: true
+
+
 
 # jdbc:mysql://127.0.0.1:3306/test?useSSL=false&characterEncoding=UTF-8&serverTimezone=Asia/Seoul
 
