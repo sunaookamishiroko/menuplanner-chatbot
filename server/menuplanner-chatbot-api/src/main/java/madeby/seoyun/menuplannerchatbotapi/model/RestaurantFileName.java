@@ -15,9 +15,9 @@ import java.io.Serializable;
 @Table(name = "restaurantFileName")
 public class RestaurantFileName implements Serializable {
     @Id
-    int id;
+    private int id;
 
-    String fileName;
+    private String fileName;
 
     public RestaurantFileName() {}
 

@@ -16,9 +16,9 @@ import java.io.Serializable;
 public class ServerInfo implements Serializable {
 
     @Id
-    int id;
+    private int id;
 
-    boolean IsVacation;
+    private boolean IsVacation;
 
     public ServerInfo() {}
 
