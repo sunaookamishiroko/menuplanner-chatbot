@@ -31,10 +31,9 @@ public class ParsingMenu {
 
     private final SettingProperty settingProperty;
 
-    private boolean isParsingNowEblock = false;
-    private boolean isParsingNowTIP = false;
-    private boolean isBeforeParsingEblock = false;
-    private boolean isBeforeParsingTIP = false;
+    private boolean isNowParsingEblock = false;
+    private boolean isNowParsingTIP = false;
+    private boolean isBeforeParsing = false;
 
     @Autowired
     public ParsingMenu(RestaurantFileNameRepository restaurantFileNameRepository,
@@ -105,8 +104,7 @@ public class ParsingMenu {
     @Scheduled(cron = "0 0 0 * * 1")
     public void setMondaySignalTrue() {
         LogData.printLog("monday = true", "setMondaySignalTrue");
-        isBeforeParsingEblock = true;
-        isBeforeParsingTIP = true;
+        isBeforeParsing = true;
     }
 
     /**
@@ -134,11 +132,10 @@ public class ParsingMenu {
         String newEblockFileName;
         String newTipFileName;
 
-        isParsingNowEblock = true;
-        isParsingNowTIP = true;
+        isNowParsingEblock = true;
+        isNowParsingTIP = true;
 
-        isBeforeParsingEblock = false;
-        isBeforeParsingTIP = false;
+        isBeforeParsing = false;
 
         while(true) {
             if (!isEblockUploaded) {
@@ -178,8 +175,8 @@ public class ParsingMenu {
      */
     @Transactional(rollbackFor = Exception.class)
     public void getDataAndSaveToDatabase() {
-        isParsingNowEblock = true;
-        isParsingNowTIP = true;
+        isNowParsingEblock = true;
+        isNowParsingTIP = true;
         getDataAndSaveToDatabaseEblock();
         getDataAndSaveToDatabaseTip();
     }
@@ -209,7 +206,7 @@ public class ParsingMenu {
 
         saveEblockMenu(eBlockMenu, eBlockMenuKeys);
 
-        isParsingNowEblock = false;
+        isNowParsingEblock = false;
         LogData.printLog("파싱 작업 완료", "getDataAndSaveToDatabaseEblock");
     }
 
@@ -238,7 +235,7 @@ public class ParsingMenu {
 
         saveTipMenu(tipMenu, tipMenuKeys);
 
-        isParsingNowTIP = false;
+        isNowParsingTIP = false;
         LogData.printLog("파싱 작업 완료", "getDataAndSaveToDatabaseTip");
     }
 
@@ -444,23 +441,13 @@ public class ParsingMenu {
     }
 
     /**
-     * E동 메뉴가 파싱 전인지 아닌지 알려준다.
+     * 월요일 0시가 되서 파싱 전인지 아닌지 알려준다.
      *
      * @ param : 없음
      * @ return : boolean : 파싱 완료 전이면 true, 완료 후면 falae
      */
-    public boolean checkBeforeParsingEblock() {
-        return isBeforeParsingEblock;
-    }
-
-    /**
-     * TIP 메뉴가 파싱 전인지 아닌지 알려준다.
-     *
-     * @ param : 없음
-     * @ return : boolean : 파싱 완료 전이면 true, 완료 후면 falae
-     */
-    public boolean checkBeforeParsingTIP() {
-        return isBeforeParsingTIP;
+    public boolean checkBeforeParsing() {
+        return isBeforeParsing;
     }
 
     /**
@@ -469,8 +456,8 @@ public class ParsingMenu {
      * @ param : 없음
      * @ return : boolean : 파싱 완료 전이면 true, 완료 후면 falae
      */
-    public boolean checkParsingNowEblock() {
-        return isParsingNowEblock;
+    public boolean checkNowParsingEblock() {
+        return isNowParsingEblock;
     }
 
     /**
@@ -479,7 +466,7 @@ public class ParsingMenu {
      * @ param : 없음
      * @ return : boolean : 파싱 완료 전이면 true, 완료 후면 falae
      */
-    public boolean checkParsingNowTIP() {
-        return isParsingNowTIP;
+    public boolean checkNowParsingTIP() {
+        return isNowParsingTIP;
     }
 }

@@ -45,9 +45,9 @@ public class TipMenuController {
      */
     @PostMapping("/tip")
     public String getTipMenu() {
-        if (parsingMenu.checkBeforeParsingTIP())
+        if (parsingMenu.checkBeforeParsing())
             return defaultMessageService.makeJson(mondayMessage);
-        else if (parsingMenu.checkParsingNowTIP())
+        else if (parsingMenu.checkNowParsingTIP())
             return defaultMessageService.makeJson(parsingMessage);
         else
             return tipMenuService.makeMenuJson();
