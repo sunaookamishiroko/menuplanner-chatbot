@@ -18,6 +18,7 @@ public class RestaurantMenu implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @Column(length = 10)
     private String date;
 
     @Nullable
