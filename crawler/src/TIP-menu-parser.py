@@ -56,9 +56,11 @@ def lambda_handler(event, context):
     # menuIndex : 메뉴가 존재하는 열의 index를 담음
     # menu : 메뉴를 저장
     # month : 월을 찾아 저장
+    # timeLine : 조식, 중식, 석식의 경계를 저장
     menuIndex = []
     menu = {}
     month = ''
+    timeLine = [0, 0, 0]
 
     # 이번 주 월, 일을 가져 온다.
     week = []
@@ -73,16 +75,24 @@ def lambda_handler(event, context):
     for i in range(len(df.columns)):
         for j in range(len(df.index)):
             temp = str(df.iloc[j, i])
+
+            if temp.find("조식") != -1 and timeLine[0] == 0:
+                timeLine[0] = j
+            elif temp.find("중식") != -1 and timeLine[1] == 0:
+                timeLine[1] = j
+            elif temp.find("석식") != -1 and timeLine[2] == 0:
+                timeLine[2] = j
+
             if temp.find('일') != -1:
                 if temp.find('/') != -1:
                     month = temp[:temp.find('/')] + '월'
                     temp = temp[temp.find('/') + 1:]
                 menuIndex.append((j + 1, i, month + ' ' + temp[:temp.find('일') + 1]))
-                break
+
             elif temp.find('월') != -1:
                 month = temp
                 month = month.replace(' ', '')
-                break
+
 
     # menuIndex를 바탕으로 menu를 파싱하여 저장하는 과정
     for start, i, day in menuIndex:
@@ -96,26 +106,17 @@ def lambda_handler(event, context):
 
         for j in range(start, len(df.index)):
             temp = str(df.iloc[j, i])
-            if temp == '0':
-                if count == 3:
-                    break
-                if signal:
-                    signal = False
-            else:
-                if not signal:
-                    count += 1
-                    signal = True
-
+            if temp != '0':
                 if temp == "미운영":
                     dash = ''
                 else:
                     dash = '- '
 
-                if count == 1:
+                if timeLine[0] <= j < timeLine[1]:
                     tempdict["breakFast"].append(dash + temp)
-                elif count == 2:
+                elif timeLine[1] <= j < timeLine[2]:
                     tempdict["lunch"].append(dash + temp)
-                elif count == 3:
+                elif timeLine[2] <= j:
                     tempdict["dinner"].append(dash + temp)
 
         tempdict["breakFast"] = '\n'.join(s for s in tempdict["breakFast"])
