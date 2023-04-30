@@ -14,7 +14,7 @@
 - 식당메뉴를 보기 위해 한국공학대 앱으로 들어가서 사진으로 봐야하는 불편함을 해결하기 위해서 제작했습니다.
 - 카카오 챗봇을 이용해 메시지로 오늘의 E동 식당과 TIP 지하 식당의 메뉴를 제공합니다.
 
-- [챗봇 바로 가기](https://pf.kakao.com/_hwWLb)
+- <s>[챗봇 바로 가기]</s> 서비스를 종료했습니다.(2023.04.29)
 
 ## Architecture
 
@@ -42,7 +42,3 @@
 
 - [spring 서버](https://github.com/sunaookamishiroko/menuplanner-chatbot/tree/main/server/menuplanner-chatbot-api)
 - [crawler](https://github.com/somewheregreeny/menuplanner-chatbot/tree/main/crawler)
-
-## 업데이트 예정
-
-- web 기반 관리자 DB 관리 툴
